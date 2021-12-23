@@ -2,9 +2,14 @@
 
 MainMenuScene::MainMenuScene(QObject *parent) : QGraphicsScene{parent}
 {
-	setSceneRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	setSceneRect(0, 0, 800, 600);
+	setBackgroundBrush(QBrush(QColor(COLOR_MAIN_MENU_BG)));
 
-	titleText.setPlainText("EcoCity");
+	QPixmap pixmap(":/pixmaps/mainMenuLogo");
+	pixmap = pixmap.scaled(300, 300);
+	titlePixmap.setPixmap(pixmap);
+	titlePixmap.setPos(width()/2 - pixmap.width()/2, 0);
+	addItem(&titlePixmap);
 
 	startButton.setText("Démarrer une partie");
 	quitButton.setText("Quitter");
@@ -21,8 +26,8 @@ MainMenuScene::MainMenuScene(QObject *parent) : QGraphicsScene{parent}
 	startButtonItem = addWidget(&startButton);
 	quitButtonItem = addWidget(&quitButton);
 
-	startButtonItem->setPos(WINDOW_WIDTH/2 - startButton.width()/2, WINDOW_HEIGHT*5/8 - startButton.height()/2);
-	quitButtonItem->setPos(WINDOW_WIDTH/2 - quitButton.width()/2, WINDOW_HEIGHT*5/6 - quitButton.height()/2);
+	startButtonItem->setPos(width()/2 - startButton.width()/2, height()*5/8 - startButton.height()/2);
+	quitButtonItem->setPos(width()/2 - quitButton.width()/2, height()*5/6 - quitButton.height()/2);
 
 	connect(&startButton, &QPushButton::clicked, this, &MainMenuScene::startButton_on_clicked);
 	connect(&quitButton, &QPushButton::clicked, this, &MainMenuScene::quitButton_on_clicked);

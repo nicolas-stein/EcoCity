@@ -3,10 +3,12 @@
 
 #include "Constants.h"
 #include <QGraphicsScene>
-#include <QGraphicsTextItem>
+#include <QGraphicsPixmapItem>
 #include <QPushButton>
 #include <QGraphicsProxyWidget>
 #include <QFont>
+#include <QBrush>
+#include <QColor>
 
 class MainMenuScene : public QGraphicsScene
 {
@@ -15,7 +17,7 @@ public:
 	explicit MainMenuScene(QObject *parent = nullptr);
 
 private:
-	QGraphicsTextItem titleText;
+	QGraphicsPixmapItem titlePixmap;
 	QPushButton startButton;
 	QPushButton quitButton;
 

@@ -2,4 +2,35 @@
     <qresource prefix="/fonts">
         <file alias="gunplay-rg">Files/Fonts/gunplay-rg.ttf</file>
     </qresource>
+    <qresource prefix="/pixmaps">
+        <file alias="mainMenuLogo">Files/Pixmaps/main_menu_logo.png</file>
+    </qresource>
+    <qresource prefix="/pixmaps/terrain">
+        <file alias="grassTile">Files/Pixmaps/Terrain/grassTile.jpg</file>
+        <file alias="waterTile">Files/Pixmaps/Terrain/waterTile.jpg</file>
+        <file alias="sandTile">Files/Pixmaps/Terrain/sandTile.jpg</file>
+        <file alias="rockTile">Files/Pixmaps/Terrain/rockTile.jpg</file>
+        <file alias="mountainTile">Files/Pixmaps/Terrain/mountainTile.jpg</file>
+    </qresource>
+    <qresource prefix="/pixmaps/roads/two-lanes">
+        <file alias="cross">Files/Pixmaps/road/two-lanes/two-lanes-cross.jpg</file>
+        <file alias="straight-1">Files/Pixmaps/road/two-lanes/two-lanes-straight-1.jpg</file>
+        <file alias="straight-2">Files/Pixmaps/road/two-lanes/two-lanes-straight-2.jpg</file>
+        <file alias="straight-3">Files/Pixmaps/road/two-lanes/two-lanes-straight-3.jpg</file>
+        <file alias="straight-4">Files/Pixmaps/road/two-lanes/two-lanes-straight-4.jpg</file>
+        <file alias="T-junction">Files/Pixmaps/road/two-lanes/two-lanes-T-junction.jpg</file>
+        <file alias="turn">Files/Pixmaps/road/two-lanes/two-lanes-turn.jpg</file>
+        <file alias="dead-end">Files/Pixmaps/road/two-lanes/two-lanes-dead-end.jpg</file>
+    </qresource>
+    <qresource prefix="/pixmaps/zones">
+        <file alias="commercialTile">Files/Pixmaps/zone/commercialTile.jpg</file>
+        <file alias="noneTile">Files/Pixmaps/zone/noneTile.jpg</file>
+        <file alias="residentialTile">Files/Pixmaps/zone/residentialTile.jpg</file>
+        <file alias="industrialTile">Files/Pixmaps/zone/industrialTile.jpg</file>
+    </qresource>
+    <qresource prefix="/pixmaps/residential">
+        <file alias="house_1">Files/Pixmaps/residential/house_1.png</file>
+        <file alias="caravan">Files/Pixmaps/residential/caravan.png</file>
+        <file alias="caravan_rotate">Files/Pixmaps/residential/caravan_rotate.png</file>
+    </qresource>
 </RCC>
