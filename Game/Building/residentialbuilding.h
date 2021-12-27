@@ -6,9 +6,9 @@
 class ResidentialBuilding : public Building
 {
 public:
-	ResidentialBuilding(int posX, int posY, int width, int height, int maxResidents, QMap<ZoneType, QList<QPixmap>> *zonePixmaps);
+	ResidentialBuilding(int posX, int posY, int width, int height, int residents, int maxResidents, QMap<ZoneType, QList<QPixmap>> *zonePixmaps);
 private :
-	int residents = 0;
+	int residents;
 	int maxResidents;
 };
 

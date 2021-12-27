@@ -364,7 +364,7 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 							}
 
 							if(canPut4x4){
-								ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*4, ZONE_SQUARE_SIZE*4, 5, &buildingPixmaps);
+								ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*4, ZONE_SQUARE_SIZE*4, 2, 5, &buildingPixmaps);
 								for(int i=x;i<x+4;i++){
 									for(int j=y;j<y+4;j++){
 										zoneGrid[i][j]->setBuilding(newBuilding);
@@ -376,7 +376,7 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 							else if(random >997){
 								int zoneAdjacentToRoad = zoneGrid[x][y]->isZoneAdjacentToRoad(roadGrid);
 								if(zoneAdjacentToRoad == 2 && y > 0 && zoneGrid[x][y-1]!=nullptr && zoneGrid[x][y-1]->getZoneType()==Residential && zoneGrid[x][y-1]->getBuilding()==nullptr){
-									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y-1]->getPosX(), zoneGrid[x][y-1]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 3, &buildingPixmaps);
+									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y-1]->getPosX(), zoneGrid[x][y-1]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 1, 3, &buildingPixmaps);
 									zoneGrid[x][y]->setBuilding(newBuilding);
 									zoneGrid[x][y-1]->setBuilding(newBuilding);
 									newBuilding->addCoveringZone(zoneGrid[x][y]);
@@ -384,7 +384,7 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 									emit buildingCreated(newBuilding);
 								}
 								else if(zoneAdjacentToRoad == 8 && y < ZONE_GRID_SIZE-1 && zoneGrid[x][y+1]!=nullptr && zoneGrid[x][y+1]->getZoneType()==Residential && zoneGrid[x][y+1]->getBuilding()==nullptr){
-									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 3, &buildingPixmaps);
+									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 1, 3, &buildingPixmaps);
 									zoneGrid[x][y]->setBuilding(newBuilding);
 									zoneGrid[x][y+1]->setBuilding(newBuilding);
 									newBuilding->addCoveringZone(zoneGrid[x][y]);
@@ -392,7 +392,7 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 									emit buildingCreated(newBuilding);
 								}
 								else if(zoneAdjacentToRoad == 6 && x > 0 && zoneGrid[x-1][y]!=nullptr && zoneGrid[x-1][y]->getZoneType()==Residential && zoneGrid[x-1][y]->getBuilding()==nullptr){
-									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x-1][y]->getPosX(), zoneGrid[x-1][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 3, &buildingPixmaps);
+									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x-1][y]->getPosX(), zoneGrid[x-1][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 1, 3, &buildingPixmaps);
 									zoneGrid[x][y]->setBuilding(newBuilding);
 									zoneGrid[x-1][y]->setBuilding(newBuilding);
 									newBuilding->addCoveringZone(zoneGrid[x][y]);
@@ -400,7 +400,7 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 									emit buildingCreated(newBuilding);
 								}
 								else if(zoneAdjacentToRoad == 4 && x < ZONE_GRID_SIZE-1 && zoneGrid[x+1][y]!=nullptr && zoneGrid[x+1][y]->getZoneType()==Residential && zoneGrid[x+1][y]->getBuilding()==nullptr){
-									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 3, &buildingPixmaps);
+									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 1, 3, &buildingPixmaps);
 									zoneGrid[x][y]->setBuilding(newBuilding);
 									zoneGrid[x+1][y]->setBuilding(newBuilding);
 									newBuilding->addCoveringZone(zoneGrid[x][y]);

@@ -1,6 +1,6 @@
 #include "residentialbuilding.h"
 
-ResidentialBuilding::ResidentialBuilding(int posX, int posY, int width, int height, int maxResidents, QMap<ZoneType, QList<QPixmap>> *zonePixmaps): Building(posX, posY, width, height, Residential, zonePixmaps), maxResidents(maxResidents)
+ResidentialBuilding::ResidentialBuilding(int posX, int posY, int width, int height, int residents, int maxResidents, QMap<ZoneType, QList<QPixmap>> *zonePixmaps): Building(posX, posY, width, height, Residential, zonePixmaps), residents(residents), maxResidents(maxResidents)
 {
 	int widthGrid = width/ZONE_SQUARE_SIZE;
 	int heightGrid = height/ZONE_SQUARE_SIZE;
