@@ -28,10 +28,17 @@ GameLogicThread::GameLogicThread()
 	zonePixmaps[Industrial] = QPixmap(":/pixmaps/zones/industrialTile").scaled(ZONE_SQUARE_SIZE+ZONE_SQUARE_MARGIN, ZONE_SQUARE_SIZE+ZONE_SQUARE_MARGIN);
 
 	//Building Pixmap
+	//Residential
 	residentialPixmaps.append(QPixmap(":/pixmaps/residential/house_1").scaled(ZONE_SQUARE_SIZE*4+BUILDING_MARGIN, ZONE_SQUARE_SIZE*4+BUILDING_MARGIN));
 	residentialPixmaps.append(QPixmap(":/pixmaps/residential/caravan").scaled(ZONE_SQUARE_SIZE*1+BUILDING_MARGIN, ZONE_SQUARE_SIZE*2+BUILDING_MARGIN));
 	residentialPixmaps.append(QPixmap(":/pixmaps/residential/caravan_rotate").scaled(ZONE_SQUARE_SIZE*2+BUILDING_MARGIN, ZONE_SQUARE_SIZE*1+BUILDING_MARGIN));
 	buildingPixmaps[Residential] = residentialPixmaps;
+
+	//Commercial
+	commercialPixmaps.append(QPixmap(":/pixmaps/commercial/burger").scaled(ZONE_SQUARE_SIZE*4+BUILDING_MARGIN, ZONE_SQUARE_SIZE*4+BUILDING_MARGIN));
+	commercialPixmaps.append(QPixmap(":/pixmaps/commercial/food_truck").scaled(ZONE_SQUARE_SIZE*1+BUILDING_MARGIN, ZONE_SQUARE_SIZE*2+BUILDING_MARGIN));
+	commercialPixmaps.append(QPixmap(":/pixmaps/commercial/food_truck_rotate").scaled(ZONE_SQUARE_SIZE*2+BUILDING_MARGIN, ZONE_SQUARE_SIZE*1+BUILDING_MARGIN));
+	buildingPixmaps[Commercial] = commercialPixmaps;
 
 	//Init map
 	const siv::PerlinNoise::seed_type seed = QRandomGenerator::global()->generate();
@@ -344,77 +351,135 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 		gameDate = gameDate.addDays(1);
 		emit gameDateChanged(gameDate);
 
-		int random;
-		for(int x=0;x<ZONE_GRID_SIZE;x++){
-			for(int y=0;y<ZONE_GRID_SIZE;y++){
-				if(zoneGrid[x][y]!=nullptr && zoneGrid[x][y]->getBuilding()==nullptr){
-					random = QRandomGenerator::global()->generate()%1000;
-					if(zoneGrid[x][y]->getZoneType()==Residential){
-						if(random > 970){ //Generate building
-							bool canPut4x4 = true;
-							for(int i=x;i<x+4;i++){
-								for(int j=y;j<y+4;j++){
-									if(i>=ZONE_GRID_SIZE || j>=ZONE_GRID_SIZE){
-										canPut4x4 = false;
-									}
-									else if(zoneGrid[i][j] == nullptr || zoneGrid[i][j]->getBuilding() != nullptr || zoneGrid[i][j]->getZoneType() != Residential){
-										canPut4x4 = false;
-									}
-								}
-							}
+		if(QRandomGenerator::global()->generate()%100 > 60){
+			generateNewBuilding(Residential);
+		}
 
-							if(canPut4x4){
-								ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*4, ZONE_SQUARE_SIZE*4, 2, 5, &buildingPixmaps);
-								for(int i=x;i<x+4;i++){
-									for(int j=y;j<y+4;j++){
-										zoneGrid[i][j]->setBuilding(newBuilding);
-										newBuilding->addCoveringZone(zoneGrid[i][j]);
-									}
-								}
-								emit buildingCreated(newBuilding);
-							}
-							else if(random >997){
-								int zoneAdjacentToRoad = zoneGrid[x][y]->isZoneAdjacentToRoad(roadGrid);
-								if(zoneAdjacentToRoad == 2 && y > 0 && zoneGrid[x][y-1]!=nullptr && zoneGrid[x][y-1]->getZoneType()==Residential && zoneGrid[x][y-1]->getBuilding()==nullptr){
-									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y-1]->getPosX(), zoneGrid[x][y-1]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 1, 3, &buildingPixmaps);
-									zoneGrid[x][y]->setBuilding(newBuilding);
-									zoneGrid[x][y-1]->setBuilding(newBuilding);
-									newBuilding->addCoveringZone(zoneGrid[x][y]);
-									newBuilding->addCoveringZone(zoneGrid[x][y-1]);
-									emit buildingCreated(newBuilding);
-								}
-								else if(zoneAdjacentToRoad == 8 && y < ZONE_GRID_SIZE-1 && zoneGrid[x][y+1]!=nullptr && zoneGrid[x][y+1]->getZoneType()==Residential && zoneGrid[x][y+1]->getBuilding()==nullptr){
-									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 1, 3, &buildingPixmaps);
-									zoneGrid[x][y]->setBuilding(newBuilding);
-									zoneGrid[x][y+1]->setBuilding(newBuilding);
-									newBuilding->addCoveringZone(zoneGrid[x][y]);
-									newBuilding->addCoveringZone(zoneGrid[x][y+1]);
-									emit buildingCreated(newBuilding);
-								}
-								else if(zoneAdjacentToRoad == 6 && x > 0 && zoneGrid[x-1][y]!=nullptr && zoneGrid[x-1][y]->getZoneType()==Residential && zoneGrid[x-1][y]->getBuilding()==nullptr){
-									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x-1][y]->getPosX(), zoneGrid[x-1][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 1, 3, &buildingPixmaps);
-									zoneGrid[x][y]->setBuilding(newBuilding);
-									zoneGrid[x-1][y]->setBuilding(newBuilding);
-									newBuilding->addCoveringZone(zoneGrid[x][y]);
-									newBuilding->addCoveringZone(zoneGrid[x-1][y]);
-									emit buildingCreated(newBuilding);
-								}
-								else if(zoneAdjacentToRoad == 4 && x < ZONE_GRID_SIZE-1 && zoneGrid[x+1][y]!=nullptr && zoneGrid[x+1][y]->getZoneType()==Residential && zoneGrid[x+1][y]->getBuilding()==nullptr){
-									ResidentialBuilding *newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 1, 3, &buildingPixmaps);
-									zoneGrid[x][y]->setBuilding(newBuilding);
-									zoneGrid[x+1][y]->setBuilding(newBuilding);
-									newBuilding->addCoveringZone(zoneGrid[x][y]);
-									newBuilding->addCoveringZone(zoneGrid[x+1][y]);
-									emit buildingCreated(newBuilding);
-								}
-							}
-						}
-					}
-				}
-			}
+		if(QRandomGenerator::global()->generate()%100 > 60){
+			generateNewBuilding(Commercial);
 		}
 
 		//qDebug() << "Time taken : " << timer.elapsed() << "ms";
 	}
 }
 
+bool GameLogicThread::canPut4x4(int x, int y, ZoneType ZoneType){
+	for(int i=x;i<x+4;i++){
+		for(int j=y;j<y+4;j++){
+			if(i>=ZONE_GRID_SIZE || j>=ZONE_GRID_SIZE){
+				return false;
+			}
+			else if(zoneGrid[i][j] == nullptr || zoneGrid[i][j]->getBuilding() != nullptr || zoneGrid[i][j]->getZoneType() != ZoneType){
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+void GameLogicThread::generateNewBuilding(ZoneType zoneType)
+{
+	Building *newBuilding;
+	for(int x=0;x<ZONE_GRID_SIZE;x++){
+		for(int y=0;y<ZONE_GRID_SIZE;y++){
+			if(zoneGrid[x][y]!=nullptr && zoneGrid[x][y]->getBuilding()==nullptr && zoneGrid[x][y]->getZoneType()==zoneType){
+				if(canPut4x4(x, y, zoneType)){
+					if(zoneType==Residential){
+						newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*4, ZONE_SQUARE_SIZE*4, 2, 5, &buildingPixmaps);
+					}
+					else if(zoneType==Commercial){
+						newBuilding = new CommercialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*4, ZONE_SQUARE_SIZE*4, 5, 15, &buildingPixmaps);
+					}
+					else{
+						//TODO
+						return;
+					}
+					for(int i=x;i<x+4;i++){
+						for(int j=y;j<y+4;j++){
+							zoneGrid[i][j]->setBuilding(newBuilding);
+							newBuilding->addCoveringZone(zoneGrid[i][j]);
+						}
+					}
+					emit buildingCreated(newBuilding);
+					return;
+				}
+			}
+		}
+	}
+
+	for(int x=0;x<ZONE_GRID_SIZE;x++){
+		for(int y=0;y<ZONE_GRID_SIZE;y++){
+			if(zoneGrid[x][y]!=nullptr && zoneGrid[x][y]->getBuilding()==nullptr && zoneGrid[x][y]->getZoneType()==zoneType){
+				int zoneAdjacentToRoad = zoneGrid[x][y]->isZoneAdjacentToRoad(roadGrid);
+				if(zoneAdjacentToRoad == 2 && y > 0 && zoneGrid[x][y-1]!=nullptr && zoneGrid[x][y-1]->getZoneType()==zoneType && zoneGrid[x][y-1]->getBuilding()==nullptr){
+					if(zoneType == Residential){
+						newBuilding = new ResidentialBuilding(zoneGrid[x][y-1]->getPosX(), zoneGrid[x][y-1]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 1, 3, &buildingPixmaps);
+					}
+					else if(zoneType == Commercial){
+						newBuilding = new CommercialBuilding(zoneGrid[x][y-1]->getPosX(), zoneGrid[x][y-1]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 3, 6, &buildingPixmaps);
+					}
+					zoneGrid[x][y]->setBuilding(newBuilding);
+					zoneGrid[x][y-1]->setBuilding(newBuilding);
+					newBuilding->addCoveringZone(zoneGrid[x][y]);
+					newBuilding->addCoveringZone(zoneGrid[x][y-1]);
+					emit buildingCreated(newBuilding);
+					return;
+				}
+				else if(zoneAdjacentToRoad == 8 && y < ZONE_GRID_SIZE-1 && zoneGrid[x][y+1]!=nullptr && zoneGrid[x][y+1]->getZoneType()==zoneType && zoneGrid[x][y+1]->getBuilding()==nullptr){
+					if(zoneType == Residential){
+						newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 1, 3, &buildingPixmaps);
+					}
+					else if(zoneType == Commercial){
+						newBuilding = new CommercialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*1, ZONE_SQUARE_SIZE*2, 1, 3, &buildingPixmaps);
+					}
+					else{
+						//TODO
+						return;
+					}
+					zoneGrid[x][y]->setBuilding(newBuilding);
+					zoneGrid[x][y+1]->setBuilding(newBuilding);
+					newBuilding->addCoveringZone(zoneGrid[x][y]);
+					newBuilding->addCoveringZone(zoneGrid[x][y+1]);
+					emit buildingCreated(newBuilding);
+					return;
+				}
+				else if(zoneAdjacentToRoad == 6 && x > 0 && zoneGrid[x-1][y]!=nullptr && zoneGrid[x-1][y]->getZoneType()==zoneType && zoneGrid[x-1][y]->getBuilding()==nullptr){
+					if(zoneType == Residential){
+						newBuilding = new ResidentialBuilding(zoneGrid[x-1][y]->getPosX(), zoneGrid[x-1][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 1, 3, &buildingPixmaps);
+					}
+					else if(zoneType == Commercial){
+						newBuilding = new CommercialBuilding(zoneGrid[x-1][y]->getPosX(), zoneGrid[x-1][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 1, 3, &buildingPixmaps);
+					}
+					else{
+						//TODO
+						return;
+					}
+					zoneGrid[x][y]->setBuilding(newBuilding);
+					zoneGrid[x-1][y]->setBuilding(newBuilding);
+					newBuilding->addCoveringZone(zoneGrid[x][y]);
+					newBuilding->addCoveringZone(zoneGrid[x-1][y]);
+					emit buildingCreated(newBuilding);
+					return;
+				}
+				else if(zoneAdjacentToRoad == 4 && x < ZONE_GRID_SIZE-1 && zoneGrid[x+1][y]!=nullptr && zoneGrid[x+1][y]->getZoneType()==zoneType && zoneGrid[x+1][y]->getBuilding()==nullptr){
+					if(zoneType == Residential){
+						newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 1, 3, &buildingPixmaps);
+					}
+					else if(zoneType == Commercial){
+						newBuilding = new CommercialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*2, ZONE_SQUARE_SIZE*1, 1, 3, &buildingPixmaps);
+					}
+					else{
+						//TODO
+						return;
+					}
+					zoneGrid[x][y]->setBuilding(newBuilding);
+					zoneGrid[x+1][y]->setBuilding(newBuilding);
+					newBuilding->addCoveringZone(zoneGrid[x][y]);
+					newBuilding->addCoveringZone(zoneGrid[x+1][y]);
+					emit buildingCreated(newBuilding);
+					return;
+				}
+			}
+		}
+	}
+}

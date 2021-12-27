@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     Game/Building/building.cpp \
+    Game/Building/commercialbuilding.cpp \
     Game/Building/residentialbuilding.cpp \
     Game/Grid/roadsquare.cpp \
     Game/Grid/zonesquare.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
 HEADERS += \
     Constants.h \
     Game/Building/building.h \
+    Game/Building/commercialbuilding.h \
     Game/Building/residentialbuilding.h \
     Game/Grid/roadsquare.h \
     Game/Grid/zonesquare.h \

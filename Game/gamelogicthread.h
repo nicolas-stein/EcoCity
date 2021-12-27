@@ -5,6 +5,8 @@
 #include "Grid/terrainsquare.h"
 #include "Grid/roadsquare.h"
 #include "Grid/zonesquare.h"
+#include "Game/Building/residentialbuilding.h"
+#include "Game/Building/commercialbuilding.h"
 #include "PerlinNoise.hpp"
 
 #include <QTimer>
@@ -44,6 +46,8 @@ protected:
 private:
 
 	void removeZoneSquare(int zoneX, int zoneY);
+	void generateNewBuilding(ZoneType zoneType);
+	bool canPut4x4(int x, int y, ZoneType ZoneType);
 
 	QTimer *updateTimer;
 	TerrainSquare ***terrainGrid;
@@ -57,6 +61,7 @@ private:
 
 	QMap<ZoneType, QList<QPixmap>> buildingPixmaps;
 	QList<QPixmap> residentialPixmaps;
+	QList<QPixmap> commercialPixmaps;
 
 	int tickCounter = 0;
 	QDate gameDate;
