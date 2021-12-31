@@ -7,6 +7,7 @@
 #include "Grid/zonesquare.h"
 #include "Game/Building/residentialbuilding.h"
 #include "Game/Building/commercialbuilding.h"
+#include "Game/Building/industrialbuilding.h"
 #include "PerlinNoise.hpp"
 
 #include <QTimer>
@@ -62,6 +63,7 @@ private:
 	QMap<ZoneType, QList<QPixmap>> buildingPixmaps;
 	QList<QPixmap> residentialPixmaps;
 	QList<QPixmap> commercialPixmaps;
+	QList<QPixmap> industrialPixmaps;
 
 	int tickCounter = 0;
 	QDate gameDate;

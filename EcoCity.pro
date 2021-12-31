@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     Game/Building/building.cpp \
     Game/Building/commercialbuilding.cpp \
+    Game/Building/industrialbuilding.cpp \
     Game/Building/residentialbuilding.cpp \
     Game/Grid/roadsquare.cpp \
     Game/Grid/zonesquare.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     Constants.h \
     Game/Building/building.h \
     Game/Building/commercialbuilding.h \
+    Game/Building/industrialbuilding.h \
     Game/Building/residentialbuilding.h \
     Game/Grid/roadsquare.h \
     Game/Grid/zonesquare.h \
@@ -49,5 +51,6 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-OTHER_FILES += \
+#OTHER_FILES += \
+RESOURCES += \
     ressources.qrc

@@ -38,4 +38,10 @@
         <file alias="food_truck">Files/Pixmaps/commercial/food_truck.png</file>
         <file alias="food_truck_rotate">Files/Pixmaps/commercial/food_truck_rotate.png</file>
     </qresource>
+    <qresource prefix="/pixmaps/industrial">
+        <file alias="factory_1">Files/Pixmaps/industrial/factory_1.png</file>
+        <file alias="factory_1_rotate">Files/Pixmaps/industrial/factory_1_rotate.png</file>
+        <file alias="factory_2">Files/Pixmaps/industrial/factory_2.png</file>
+        <file alias="factory_2_rotate">Files/Pixmaps/industrial/factory_2_rotate.png</file>
+    </qresource>
 </RCC>
