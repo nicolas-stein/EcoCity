@@ -32,6 +32,7 @@
         <file alias="house_1">Files/Pixmaps/residential/house_1.png</file>
         <file alias="caravan">Files/Pixmaps/residential/caravan.png</file>
         <file alias="caravan_rotate">Files/Pixmaps/residential/caravan_rotate.png</file>
+        <file alias="skyscrapper_1">Files/Pixmaps/residential/skyscrapper_1.png</file>
     </qresource>
     <qresource prefix="/pixmaps/commercial">
         <file alias="burger">Files/Pixmaps/commercial/burger.png</file>

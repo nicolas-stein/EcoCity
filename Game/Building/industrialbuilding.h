@@ -8,10 +8,11 @@
 class IndustrialBuilding : public Building
 {
 public:
-	IndustrialBuilding(int posX, int posY, int width, int height, int workers, int maxWorkers, QMap<ZoneType, QList<QPixmap>> *zonePixmaps);
+	IndustrialBuilding(int posX, int posY, int width, int height, QMap<ZoneType, QList<QPixmap>> *zonePixmaps);
+
+	int getMaxWorkers() const;
 
 private:
-	int workers;
 	int maxWorkers;
 };
 

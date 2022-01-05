@@ -37,9 +37,11 @@ public:
 	GridSquare *requestBuildSquare(GridSquare *square);
 	void updateAdjacentRoadPixmaps(int x, int y, int recursive);
 	void updateAdjacentRoadZones(RoadSquare *roadSquare);
-	void requestDestroy(GridSquare *gridSquare);
+	void requestDestroyRoad(RoadSquare *roadSquare);
+	void requestDestroyBuilding(Building *building);
 
 	void setGameSpeed(double newGameSpeed);
+	void updateGameDemands();
 
 protected:
 	void run();
@@ -47,13 +49,14 @@ protected:
 private:
 
 	void removeZoneSquare(int zoneX, int zoneY);
-	void generateNewBuilding(ZoneType zoneType);
-	bool canPut4x4(int x, int y, ZoneType ZoneType);
+	bool generateNewBuilding(ZoneType zoneType);
+	bool putBuilding(int x, int y, int widthGrid, int heightGrid, ZoneType zoneType);
 
 	QTimer *updateTimer;
 	TerrainSquare ***terrainGrid;
 	RoadSquare ***roadGrid;
 	ZoneSquare ***zoneGrid;
+	QList<Building*> buildingList;
 
 	QMap<TerrainType, QPixmap> terrainPixmaps;
 	QMap<RoadAngle, QPixmap> twoLanesPixmaps;
@@ -77,6 +80,7 @@ signals:
 	void zoneSquareRemoved(ZoneSquare *zoneSquare);
 	void buildingCreated(Building *building);
 	void gameDateChanged(QDate newDate);
+	void gameDemandsUpdated(int res, int maxRes, int com, int maxCom, int indu, int maxIndu);
 };
 
 #endif // GAMELOGICTHREAD_H

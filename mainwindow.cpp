@@ -32,6 +32,8 @@ void MainWindow::startGame()
 		ui->tabWidget_construction->setCurrentIndex(0);
 		mainGame_graphicsScene = new MainGameScene(ui->graphicsView);
 		connect(mainGame_graphicsScene, SIGNAL(gameDateChanged(QDate)), this, SLOT(gameDateChanged(QDate)));
+		connect(mainGame_graphicsScene, SIGNAL(gameDemandsUpdated(int,int,int,int,int,int)), this, SLOT(gameDemandsUpdated(int,int,int,int,int,int)));
+
 		ui->graphicsView->setScene(mainGame_graphicsScene);
 		ui->graphicsView->setPanEnable(true);
 		ui->graphicsView->setZoomEnbale(true);
@@ -257,6 +259,18 @@ void MainWindow::gameDateChanged(QDate newDate)
 	ui->progressBar_date->setMaximum(newDate.daysInMonth());
 	ui->progressBar_date->setValue(newDate.day());
 	ui->progressBar_date->setFormat(newDate.toString("MMM yyyy"));
+}
+
+void MainWindow::gameDemandsUpdated(int res, int maxRes, int com, int maxCom, int indu, int maxIndu)
+{
+	ui->progressBar_residential->setMaximum(maxRes);
+	ui->progressBar_residential->setValue(res);
+
+	ui->progressBar_commercial->setMaximum(maxCom);
+	ui->progressBar_commercial->setValue(com);
+
+	ui->progressBar_industrial->setMaximum(maxIndu);
+	ui->progressBar_industrial->setValue(indu);
 }
 
 

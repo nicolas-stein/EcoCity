@@ -37,6 +37,7 @@ MainGameScene::MainGameScene(CustomGraphicsView *parent) : QGraphicsScene{parent
 	connect(&gameLogicThread, SIGNAL(zoneSquareRemoved(ZoneSquare*)), this, SLOT(zoneSquareRemoved(ZoneSquare*)));
 	connect(&gameLogicThread, SIGNAL(buildingCreated(Building*)), this, SLOT(buildingCreated(Building*)));
 	connect(&gameLogicThread, SIGNAL(gameDateChanged(QDate)), this, SIGNAL(gameDateChanged(QDate)));
+	connect(&gameLogicThread, SIGNAL(gameDemandsUpdated(int,int,int,int,int,int)), this, SIGNAL(gameDemandsUpdated(int,int,int,int,int,int)));
 }
 
 MainGameScene::~MainGameScene()
@@ -177,7 +178,7 @@ void MainGameScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 		RoadSquare *roadSquare = gameLogicThread.getRoadGrid()[x/ROAD_SQUARE_SIZE][y/ROAD_SQUARE_SIZE];
 		if(roadSquare != nullptr){
 			removeItem(roadSquare->getPixmapItem());
-			gameLogicThread.requestDestroy(roadSquare);
+			gameLogicThread.requestDestroyRoad(roadSquare);
 		}
 	}
 }
@@ -192,7 +193,7 @@ void MainGameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			RoadSquare *roadSquare = gameLogicThread.getRoadGrid()[x/ROAD_SQUARE_SIZE][y/ROAD_SQUARE_SIZE];
 			if(roadSquare != nullptr){
 				removeItem(roadSquare->getPixmapItem());
-				gameLogicThread.requestDestroy(roadSquare);
+				gameLogicThread.requestDestroyRoad(roadSquare);
 			}
 		}
 	}

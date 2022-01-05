@@ -19,3 +19,8 @@ const QList<ZoneSquare *> &Building::getCoveringZones() const
 {
 	return coveringZones;
 }
+
+ZoneType Building::getBuildingType() const
+{
+	return buildingType;
+}

@@ -67,6 +67,7 @@ protected:
 
 signals:
 	void gameDateChanged(QDate newDate);
+	void gameDemandsUpdated(int res, int maxRes, int com, int maxCom, int indu, int maxIndu);
 };
 
 #endif // MAINGAMESCENE_H

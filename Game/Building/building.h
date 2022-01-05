@@ -18,6 +18,8 @@ public:
 
 	const QList<ZoneSquare *> &getCoveringZones() const;
 
+	ZoneType getBuildingType() const;
+
 private :
 	int posX;
 	int posY;

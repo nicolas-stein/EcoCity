@@ -46,6 +46,7 @@ private slots:
 	void on_tabWidget_main_currentChanged(int index);
 
 	void gameDateChanged(QDate newDate);
+	void gameDemandsUpdated(int res, int maxRes, int com, int maxCom, int indu, int maxIndu);
 	void on_pushButton_gameSpeed_clicked();
 };
 #endif // MAINWINDOW_H
