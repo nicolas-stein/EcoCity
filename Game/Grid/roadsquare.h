@@ -2,12 +2,11 @@
 #define ROADSQUARE_H
 
 #include "gridsquare.h"
-#include "Constants.h"
 
 class RoadSquare : public GridSquare
 {
 public:
-	RoadSquare(int posX, int posY, RoadType roadType, QMap<RoadType, QMap<RoadAngle, QPixmap>> *roadPixmaps);
+	RoadSquare(int posX, int posY, RoadType roadType, RessourceManager *ressourceManager);
 	void updatePixmap(RoadSquare ***roadGrid);
 
 	RoadType getRoadType() const;
@@ -24,9 +23,6 @@ private :
 	bool connectedBottom = false;
 	bool connectedLeft = false;
 	bool connectedRight = false;
-
-
-	QMap<RoadType, QMap<RoadAngle, QPixmap>> *roadPixmaps;
 };
 
 #endif // ROADSQUARE_H

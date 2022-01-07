@@ -1,11 +1,12 @@
 #ifndef CUSTOMGRAPHICSVIEW_H
 #define CUSTOMGRAPHICSVIEW_H
 
-#include "Constants.h"
+#include "constants.h"
+
 #include <QGraphicsView>
-#include <QWheelEvent>
-#include <QRectF>
+#include <QMouseEvent>
 #include <QScrollBar>
+#include <QOpenGLWidget>
 
 class CustomGraphicsView : public QGraphicsView
 {

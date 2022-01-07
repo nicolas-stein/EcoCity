@@ -1,13 +1,8 @@
 #include "building.h"
 
-Building::Building(int posX, int posY, int width, int height, ZoneType buildingType, QMap<ZoneType, QList<QPixmap>> *zonePixmaps): posX(posX), posY(posY), width(width), height(height), buildingType(buildingType), zonePixmaps(zonePixmaps)
+Building::Building(int posX, int posY, int width, int height, BuildingType buildingType, RessourceManager *ressourceManager): posX(posX), posY(posY), buildingType(buildingType), ressourceManager(ressourceManager), width(width), height(height)
 {
 	pixmapItem.setPos(posX-BUILDING_MARGIN/2, posY-BUILDING_MARGIN/2);
-}
-
-void Building::addCoveringZone(ZoneSquare *zoneSquare)
-{
-	coveringZones.append(zoneSquare);
 }
 
 QGraphicsPixmapItem *Building::getPixmapItem()
@@ -15,12 +10,35 @@ QGraphicsPixmapItem *Building::getPixmapItem()
 	return &pixmapItem;
 }
 
-const QList<ZoneSquare *> &Building::getCoveringZones() const
-{
-	return coveringZones;
-}
-
-ZoneType Building::getBuildingType() const
+BuildingType Building::getBuildingType() const
 {
 	return buildingType;
+}
+
+void Building::setPos(int newPosX, int newPosY)
+{
+	posX = newPosX;
+	posY = newPosY;
+	pixmapItem.setPos(newPosX, newPosY);
+}
+
+int Building::getPosX() const
+{
+	return posX;
+}
+
+int Building::getPosY() const
+{
+	return posY;
+}
+
+int Building::getWidth() const
+{
+	return width;
+}
+
+
+int Building::getHeight() const
+{
+	return height;
 }

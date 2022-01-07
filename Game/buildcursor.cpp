@@ -8,9 +8,10 @@ BuildCursor::BuildCursor()
 void BuildCursor::setSquareToBuild(GridSquare *newSquareToBuild)
 {
 	squareToBuild = newSquareToBuild;
+	buildingToBuild = nullptr;
 	setPixmap(squareToBuild->getPixmapItem()->pixmap());
 	setZValue(100);
-	if(squareToBuild->getGridType()==Zone){
+	if(squareToBuild->getGridType()==GridZone){
 		setOpacity(0);
 	}
 	else{
@@ -18,68 +19,97 @@ void BuildCursor::setSquareToBuild(GridSquare *newSquareToBuild)
 	}
 }
 
+void BuildCursor::setBuildingToBuild(Building *building)
+{
+	squareToBuild = nullptr;
+	buildingToBuild = building;
+	setPixmap(building->getPixmapItem()->pixmap());
+	setZValue(100);
+	setOpacity(0.8);
+}
+
 void BuildCursor::setPosition(int x, int y)
 {
-	if(x < 0 || y < 0 || x > scene()->width() || y > scene()->height()){
-		return;
-	}
-	if(squareToBuild->getGridType()==Terrain){
-		x -= x % TERRAIN_SQUARE_SIZE;
-		y -= y % TERRAIN_SQUARE_SIZE;
-	}
-	else if(squareToBuild->getGridType()==Road){
-		x -= x % ROAD_SQUARE_SIZE;
-		y -= y % ROAD_SQUARE_SIZE;
-	}
-	else if(squareToBuild->getGridType()==Zone){
-		x -= x % ZONE_SQUARE_SIZE;
-		y -= y % ZONE_SQUARE_SIZE;
-	}
-
-	if(squareToBuild->getPosX()!=x || squareToBuild->getPosY()!=y){
-		squareToBuild->setPos(x, y);
-		setPos(squareToBuild->getPixmapItem()->x(), squareToBuild->getPixmapItem()->y());
-		if(squareToBuild->getGridType()==Road){
-			((RoadSquare*)squareToBuild)->updatePixmap(roadGrid);
-			setPixmap(squareToBuild->getPixmapItem()->pixmap());
-			if(QApplication::mouseButtons() == Qt::LeftButton){
-				emit requestBuildSquare(squareToBuild);
-			}
+	if(squareToBuild != nullptr){
+		if(squareToBuild->getGridType()==GridTerrain){
+			x -= x % TERRAIN_SQUARE_SIZE;
+			y -= y % TERRAIN_SQUARE_SIZE;
 		}
-		else if(squareToBuild->getGridType()==Zone){
-			if(zoneGrid[x/ZONE_SQUARE_SIZE][y/ZONE_SQUARE_SIZE] != nullptr){
-				setOpacity(1);
+		else if(squareToBuild->getGridType()==GridRoad){
+			x -= x % ROAD_SQUARE_SIZE;
+			y -= y % ROAD_SQUARE_SIZE;
+		}
+		else if(squareToBuild->getGridType()==GridZone){
+			x -= x % ZONE_SQUARE_SIZE;
+			y -= y % ZONE_SQUARE_SIZE;
+		}
+
+		if(x < 0 || y < 0 || x > scene()->width() || y > scene()->height()){
+			return;
+		}
+
+		if(squareToBuild->getPosX()!=x || squareToBuild->getPosY()!=y){
+			squareToBuild->setPos(x, y);
+			setPos(squareToBuild->getPixmapItem()->x(), squareToBuild->getPixmapItem()->y());
+			if(squareToBuild->getGridType()==GridRoad){
+				((RoadSquare*)squareToBuild)->updatePixmap(mapManager->getRoadGrid());
+				setPixmap(squareToBuild->getPixmapItem()->pixmap());
 				if(QApplication::mouseButtons() == Qt::LeftButton){
-					emit changeZoneSquareType((ZoneSquare*)squareToBuild);
+					emit requestBuildSquare(squareToBuild);
 				}
 			}
-			else{
-				setOpacity(0);
+			else if(squareToBuild->getGridType()==GridZone){
+				if(mapManager->getZoneGrid()[x/ZONE_SQUARE_SIZE][y/ZONE_SQUARE_SIZE] != nullptr){
+					setOpacity(1);
+					if(QApplication::mouseButtons() == Qt::LeftButton){
+						emit changeZoneSquareType((ZoneSquare*)squareToBuild);
+					}
+				}
+				else{
+					setOpacity(0);
+				}
 			}
+		}
+	}
+	else if(buildingToBuild != nullptr){
+		x -= buildingToBuild->getWidth()/2-ROAD_SQUARE_SIZE/2;
+		x -= x % ROAD_SQUARE_SIZE;
+		y -= buildingToBuild->getHeight()/2-ROAD_SQUARE_SIZE/2;
+		y -= (y-buildingToBuild->getWidth()/2) % ROAD_SQUARE_SIZE;
+		if(x < 0 || y < 0 || x > scene()->width() || y > scene()->height()){
+			return;
+		}
+
+		if(buildingToBuild->getPosX()!=x || buildingToBuild->getPosY()!=y){
+			buildingToBuild->setPos(x, y);
+			setPos(buildingToBuild->getPixmapItem()->x(), buildingToBuild->getPixmapItem()->y());
 		}
 	}
 }
 
-void BuildCursor::setRoadGrid(RoadSquare ***newRoadGrid)
+void BuildCursor::setManagers(RessourceManager *ressourceManager, MapManager *mapManager)
 {
-	roadGrid = newRoadGrid;
-}
-
-void BuildCursor::setZoneGrid(ZoneSquare ***newZoneGrid)
-{
-	zoneGrid = newZoneGrid;
+	this->ressourceManager = ressourceManager;
+	this->mapManager = mapManager;
 }
 
 void BuildCursor::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	if(event->button() == Qt::LeftButton){
-		if(squareToBuild->getGridType()==Road){
-			emit requestBuildSquare(squareToBuild);
-			event->accept();
-			return;
+		if(squareToBuild!=nullptr){
+			if(squareToBuild->getGridType()==GridRoad){
+				emit requestBuildSquare(squareToBuild);
+				event->accept();
+				return;
+			}
+			else if(squareToBuild->getGridType()==GridZone){
+				emit changeZoneSquareType((ZoneSquare*)squareToBuild);
+				event->accept();
+				return;
+			}
 		}
-		else if(squareToBuild->getGridType()==Zone){
-			emit changeZoneSquareType((ZoneSquare*)squareToBuild);
+		else if(buildingToBuild != nullptr){
+			emit requestBuildBuilding(buildingToBuild);
 			event->accept();
 			return;
 		}

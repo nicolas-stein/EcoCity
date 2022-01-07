@@ -1,36 +1,38 @@
 #ifndef BUILDING_H
 #define BUILDING_H
 
-#include "Constants.h"
-#include <QGraphicsPixmapItem>
-#include <QList>
+#include "constants.h"
+#include "Game/ressourcemanager.h"
 
-class ZoneSquare;
+#include <QGraphicsPixmapItem>
 
 class Building
 {
 public:
-	Building(int posX, int posY, int width, int height, ZoneType buildingType, QMap<ZoneType, QList<QPixmap>> *zonePixmaps);
-
-	void addCoveringZone(ZoneSquare* zoneSquare);
+	Building(int posX, int posY, int width, int height, BuildingType buildingType, RessourceManager *ressourceManager);
 
 	QGraphicsPixmapItem *getPixmapItem();
 
-	const QList<ZoneSquare *> &getCoveringZones() const;
+	BuildingType getBuildingType() const;
 
-	ZoneType getBuildingType() const;
+	void setPos(int newPosX, int newPosY);
+	int getPosX() const;
+	int getPosY() const;
+
+	int getWidth() const;
+	int getHeight() const;
 
 private :
 	int posX;
 	int posY;
-	int width;
-	int height;
-	ZoneType buildingType;
-	QMap<ZoneType, QList<QPixmap>> *zonePixmaps;
+	BuildingType buildingType;
+	RessourceManager *ressourceManager;
 
-	QList<ZoneSquare*> coveringZones;
+
 protected :
 	QGraphicsPixmapItem pixmapItem;
+	int width;
+	int height;
 };
 
 #endif // BUILDING_H

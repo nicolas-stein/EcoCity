@@ -1,15 +1,17 @@
 #ifndef BUILDCURSOR_H
 #define BUILDCURSOR_H
 
+#include "constants.h"
+#include "Game/ressourcemanager.h"
+#include "Game/mapmanager.h"
 #include "Game/Grid/gridsquare.h"
-#include "Game/Grid/roadsquare.h"
-#include "Game/Grid/zonesquare.h"
-#include <QObject>
+#include "Game/Building/building.h"
+
 #include <QGraphicsPixmapItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
-#include <QMap>
 #include <QApplication>
+
 
 class BuildCursor : public QObject, public QGraphicsPixmapItem
 {
@@ -17,26 +19,23 @@ class BuildCursor : public QObject, public QGraphicsPixmapItem
 public:
 	BuildCursor();
 	void setSquareToBuild(GridSquare *newSquareToBuild);
+	void setBuildingToBuild(Building *building);
 	void setPosition(int x, int y);
 
-	void setRoadGrid(RoadSquare ***newRoadGrid);
-
-	void setZoneGrid(ZoneSquare ***newZoneGrid);
+	void setManagers(RessourceManager *ressourceManager, MapManager *mapManager);
 
 private :
 	GridSquare *squareToBuild = nullptr;
+	Building *buildingToBuild = nullptr;
 
 private:
-	RoadSquare ***roadGrid;
-	QMap<RoadType, QMap<RoadAngle, QPixmap>> *roadPixmaps;
-
-	ZoneSquare ***zoneGrid;
-
-	// QGraphicsItem interface
+	RessourceManager *ressourceManager;
+	MapManager *mapManager;
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 signals:
 	void requestBuildSquare(GridSquare *square);
+	void requestBuildBuilding(Building *building);
 	void changeZoneSquareType(ZoneSquare *zoneSquare);
 };
 

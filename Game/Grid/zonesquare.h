@@ -2,27 +2,26 @@
 #define ZONESQUARE_H
 
 #include "gridsquare.h"
-#include "roadsquare.h"
-#include "Game/Building/residentialbuilding.h"
-#include "Constants.h"
+#include "Game/Building/ZoneBuilding/zonebuilding.h"
+
+class RoadSquare;
 
 class ZoneSquare : public GridSquare
 {
 public:
-	ZoneSquare(int posX, int posY, ZoneType zoneType, QMap<ZoneType, QPixmap> *zonePixmaps);
+	ZoneSquare(int posX, int posY, ZoneType zoneType, RessourceManager *ressourceManager);
 	void setZoneType(ZoneType zoneType);
 	ZoneType getZoneType() const;
 
 	int isZoneAdjacentToRoad(RoadSquare ***roadGrid);
 	bool isZoneValid(ZoneSquare ***zoneGrid, RoadSquare ***roadGrid);
 
-	Building *getBuilding();
-	void setBuilding(Building *newBuilding);
+	ZoneBuilding *getBuilding();
+	void setBuilding(ZoneBuilding *newBuilding);
 
 private:
 	ZoneType zoneType;
-	QMap<ZoneType, QPixmap> *zonePixmaps;
-	Building *building = nullptr;
+	ZoneBuilding *building = nullptr;
 };
 
 #endif // ZONESQUARE_H

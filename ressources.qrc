@@ -6,11 +6,11 @@
         <file alias="mainMenuLogo">Files/Pixmaps/main_menu_logo.png</file>
     </qresource>
     <qresource prefix="/pixmaps/terrain">
-        <file alias="grassTile">Files/Pixmaps/Terrain/grassTile.jpg</file>
-        <file alias="waterTile">Files/Pixmaps/Terrain/waterTile.jpg</file>
-        <file alias="sandTile">Files/Pixmaps/Terrain/sandTile.jpg</file>
-        <file alias="rockTile">Files/Pixmaps/Terrain/rockTile.jpg</file>
-        <file alias="mountainTile">Files/Pixmaps/Terrain/mountainTile.jpg</file>
+        <file alias="grassTile">Files/Pixmaps/terrain/grassTile.jpg</file>
+        <file alias="waterTile">Files/Pixmaps/terrain/waterTile.jpg</file>
+        <file alias="sandTile">Files/Pixmaps/terrain/sandTile.jpg</file>
+        <file alias="rockTile">Files/Pixmaps/terrain/rockTile.jpg</file>
+        <file alias="mountainTile">Files/Pixmaps/terrain/mountainTile.jpg</file>
     </qresource>
     <qresource prefix="/pixmaps/roads/two-lanes">
         <file alias="cross">Files/Pixmaps/road/two-lanes/two-lanes-cross.jpg</file>
@@ -23,26 +23,30 @@
         <file alias="dead-end">Files/Pixmaps/road/two-lanes/two-lanes-dead-end.jpg</file>
     </qresource>
     <qresource prefix="/pixmaps/zones">
-        <file alias="commercialTile">Files/Pixmaps/zone/commercialTile.jpg</file>
-        <file alias="noneTile">Files/Pixmaps/zone/noneTile.jpg</file>
-        <file alias="residentialTile">Files/Pixmaps/zone/residentialTile.jpg</file>
-        <file alias="industrialTile">Files/Pixmaps/zone/industrialTile.jpg</file>
+        <file alias="commercialTile">Files/Pixmaps/zones/commercialTile.jpg</file>
+        <file alias="noneTile">Files/Pixmaps/zones/noneTile.jpg</file>
+        <file alias="residentialTile">Files/Pixmaps/zones/residentialTile.jpg</file>
+        <file alias="industrialTile">Files/Pixmaps/zones/industrialTile.jpg</file>
     </qresource>
-    <qresource prefix="/pixmaps/residential">
-        <file alias="house_1">Files/Pixmaps/residential/house_1.png</file>
-        <file alias="caravan">Files/Pixmaps/residential/caravan.png</file>
-        <file alias="caravan_rotate">Files/Pixmaps/residential/caravan_rotate.png</file>
-        <file alias="skyscrapper_1">Files/Pixmaps/residential/skyscrapper_1.png</file>
+    <qresource prefix="/pixmaps/zones/residential">
+        <file alias="house_1">Files/Pixmaps/zones/residential/house_1.png</file>
+        <file alias="caravan">Files/Pixmaps/zones/residential/caravan.png</file>
+        <file alias="caravan_rotate">Files/Pixmaps/zones/residential/caravan_rotate.png</file>
+        <file alias="skyscrapper_1">Files/Pixmaps/zones/residential/skyscrapper_1.png</file>
     </qresource>
-    <qresource prefix="/pixmaps/commercial">
-        <file alias="burger">Files/Pixmaps/commercial/burger.png</file>
-        <file alias="food_truck">Files/Pixmaps/commercial/food_truck.png</file>
-        <file alias="food_truck_rotate">Files/Pixmaps/commercial/food_truck_rotate.png</file>
+    <qresource prefix="/pixmaps/zones/commercial">
+        <file alias="burger">Files/Pixmaps/zones/commercial/burger.png</file>
+        <file alias="food_truck">Files/Pixmaps/zones/commercial/food_truck.png</file>
+        <file alias="food_truck_rotate">Files/Pixmaps/zones/commercial/food_truck_rotate.png</file>
     </qresource>
-    <qresource prefix="/pixmaps/industrial">
-        <file alias="factory_1">Files/Pixmaps/industrial/factory_1.png</file>
-        <file alias="factory_1_rotate">Files/Pixmaps/industrial/factory_1_rotate.png</file>
-        <file alias="factory_2">Files/Pixmaps/industrial/factory_2.png</file>
-        <file alias="factory_2_rotate">Files/Pixmaps/industrial/factory_2_rotate.png</file>
+    <qresource prefix="/pixmaps/zones/industrial">
+        <file alias="factory_1">Files/Pixmaps/zones/industrial/factory_1.png</file>
+        <file alias="factory_1_rotate">Files/Pixmaps/zones/industrial/factory_1_rotate.png</file>
+        <file alias="factory_2">Files/Pixmaps/zones/industrial/factory_2.png</file>
+        <file alias="factory_2_rotate">Files/Pixmaps/zones/industrial/factory_2_rotate.png</file>
+    </qresource>
+    <qresource prefix="/pixmaps/services/power">
+        <file alias="nuclear">Files/Pixmaps/services/power/nuclear.png</file>
+        <file alias="solar">Files/Pixmaps/services/power/solar.png</file>
     </qresource>
 </RCC>

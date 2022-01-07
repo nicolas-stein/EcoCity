@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(mainMenu_graphicsScene, &MainMenuScene::requestQuit, this, &MainWindow::quitApp);
 
 	ui->graphicsView->setScene(mainMenu_graphicsScene);
+	setAttribute(Qt::WA_AlwaysShowToolTips, true);
 }
 
 MainWindow::~MainWindow()
@@ -32,7 +33,7 @@ void MainWindow::startGame()
 		ui->tabWidget_construction->setCurrentIndex(0);
 		mainGame_graphicsScene = new MainGameScene(ui->graphicsView);
 		connect(mainGame_graphicsScene, SIGNAL(gameDateChanged(QDate)), this, SLOT(gameDateChanged(QDate)));
-		connect(mainGame_graphicsScene, SIGNAL(gameDemandsUpdated(int,int,int,int,int,int)), this, SLOT(gameDemandsUpdated(int,int,int,int,int,int)));
+		connect(mainGame_graphicsScene, SIGNAL(gameDemandsUpdated(double,int,double,double)), this, SLOT(gameDemandsUpdated(double,int,double,double)));
 
 		ui->graphicsView->setScene(mainGame_graphicsScene);
 		ui->graphicsView->setPanEnable(true);
@@ -55,6 +56,7 @@ void MainWindow::on_button_place_road_1_clicked(bool checked)
 		ui->button_place_road_3->setEnabled(false);
 		ui->button_remove_road->setEnabled(false);
 		ui->tabWidget_construction->setTabEnabled(1, false);
+		ui->tabWidget_construction->setTabEnabled(2, false);
 		mainGame_graphicsScene->enableBuildMode(TwoLanes);
 	}
 	else{
@@ -62,6 +64,7 @@ void MainWindow::on_button_place_road_1_clicked(bool checked)
 		ui->button_place_road_3->setEnabled(true);
 		ui->button_remove_road->setEnabled(true);
 		ui->tabWidget_construction->setTabEnabled(1, true);
+		ui->tabWidget_construction->setTabEnabled(2, true);
 		mainGame_graphicsScene->disableBuildMode();
 	}
 }
@@ -74,6 +77,7 @@ void MainWindow::on_button_place_road_2_clicked(bool checked)
 		ui->button_place_road_3->setEnabled(false);
 		ui->button_remove_road->setEnabled(false);
 		ui->tabWidget_construction->setTabEnabled(1, false);
+		ui->tabWidget_construction->setTabEnabled(2, false);
 		mainGame_graphicsScene->enableBuildMode(FourLanes);
 	}
 	else{
@@ -81,6 +85,7 @@ void MainWindow::on_button_place_road_2_clicked(bool checked)
 		ui->button_place_road_3->setEnabled(true);
 		ui->button_remove_road->setEnabled(true);
 		ui->tabWidget_construction->setTabEnabled(1, true);
+		ui->tabWidget_construction->setTabEnabled(2, true);
 		mainGame_graphicsScene->disableBuildMode();
 	}
 }
@@ -93,6 +98,7 @@ void MainWindow::on_button_place_road_3_clicked(bool checked)
 		ui->button_place_road_2->setEnabled(false);
 		ui->button_remove_road->setEnabled(false);
 		ui->tabWidget_construction->setTabEnabled(1, false);
+		ui->tabWidget_construction->setTabEnabled(2, false);
 		mainGame_graphicsScene->enableBuildMode(Highway);
 	}
 	else{
@@ -100,6 +106,7 @@ void MainWindow::on_button_place_road_3_clicked(bool checked)
 		ui->button_place_road_2->setEnabled(true);
 		ui->button_remove_road->setEnabled(true);
 		ui->tabWidget_construction->setTabEnabled(1, true);
+		ui->tabWidget_construction->setTabEnabled(2, true);
 		mainGame_graphicsScene->disableBuildMode();
 	}
 }
@@ -112,13 +119,15 @@ void MainWindow::on_button_remove_road_clicked(bool checked)
 		ui->button_place_road_2->setEnabled(false);
 		ui->button_place_road_3->setEnabled(false);
 		ui->tabWidget_construction->setTabEnabled(1, false);
-		mainGame_graphicsScene->enableDestroyMode(Road);
+		ui->tabWidget_construction->setTabEnabled(2, false);
+		mainGame_graphicsScene->enableDestroyMode(GridRoad);
 	}
 	else{
 		ui->button_place_road_1->setEnabled(true);
 		ui->button_place_road_2->setEnabled(true);
 		ui->button_place_road_3->setEnabled(true);
 		ui->tabWidget_construction->setTabEnabled(1, true);
+		ui->tabWidget_construction->setTabEnabled(2, true);
 		mainGame_graphicsScene->disableDestroyMode();
 	}
 }
@@ -130,6 +139,7 @@ void MainWindow::on_button_place_zone_1_clicked(bool checked)
 		ui->button_place_zone_3->setEnabled(false);
 		ui->button_remove_zone->setEnabled(false);
 		ui->tabWidget_construction->setTabEnabled(0, false);
+		ui->tabWidget_construction->setTabEnabled(2, false);
 		mainGame_graphicsScene->enableBuildMode(Residential);
 	}
 	else{
@@ -137,6 +147,7 @@ void MainWindow::on_button_place_zone_1_clicked(bool checked)
 		ui->button_place_zone_3->setEnabled(true);
 		ui->button_remove_zone->setEnabled(true);
 		ui->tabWidget_construction->setTabEnabled(0, true);
+		ui->tabWidget_construction->setTabEnabled(2, true);
 		mainGame_graphicsScene->disableBuildMode();
 	}
 }
@@ -149,6 +160,7 @@ void MainWindow::on_button_place_zone_2_clicked(bool checked)
 		ui->button_place_zone_3->setEnabled(false);
 		ui->button_remove_zone->setEnabled(false);
 		ui->tabWidget_construction->setTabEnabled(0, false);
+		ui->tabWidget_construction->setTabEnabled(2, false);
 		mainGame_graphicsScene->enableBuildMode(Commercial);
 	}
 	else{
@@ -156,6 +168,7 @@ void MainWindow::on_button_place_zone_2_clicked(bool checked)
 		ui->button_place_zone_3->setEnabled(true);
 		ui->button_remove_zone->setEnabled(true);
 		ui->tabWidget_construction->setTabEnabled(0, true);
+		ui->tabWidget_construction->setTabEnabled(2, true);
 		mainGame_graphicsScene->disableBuildMode();
 	}
 }
@@ -168,6 +181,7 @@ void MainWindow::on_button_place_zone_3_clicked(bool checked)
 		ui->button_place_zone_2->setEnabled(false);
 		ui->button_remove_zone->setEnabled(false);
 		ui->tabWidget_construction->setTabEnabled(0, false);
+		ui->tabWidget_construction->setTabEnabled(2, false);
 		mainGame_graphicsScene->enableBuildMode(Industrial);
 	}
 	else{
@@ -175,6 +189,7 @@ void MainWindow::on_button_place_zone_3_clicked(bool checked)
 		ui->button_place_zone_2->setEnabled(true);
 		ui->button_remove_zone->setEnabled(true);
 		ui->tabWidget_construction->setTabEnabled(0, true);
+		ui->tabWidget_construction->setTabEnabled(2, true);
 		mainGame_graphicsScene->disableBuildMode();
 	}
 }
@@ -187,6 +202,7 @@ void MainWindow::on_button_remove_zone_clicked(bool checked)
 		ui->button_place_zone_2->setEnabled(false);
 		ui->button_place_zone_3->setEnabled(false);
 		ui->tabWidget_construction->setTabEnabled(0, false);
+		ui->tabWidget_construction->setTabEnabled(2, false);
 		mainGame_graphicsScene->enableBuildMode(None);
 	}
 	else{
@@ -194,10 +210,65 @@ void MainWindow::on_button_remove_zone_clicked(bool checked)
 		ui->button_place_zone_2->setEnabled(true);
 		ui->button_place_zone_3->setEnabled(true);
 		ui->tabWidget_construction->setTabEnabled(0, true);
+		ui->tabWidget_construction->setTabEnabled(2, true);
 		mainGame_graphicsScene->disableBuildMode();
 	}
 }
 
+void MainWindow::on_button_place_power_1_clicked(bool checked)
+{
+	if(checked){
+		ui->button_place_power_2->setEnabled(false);
+		ui->button_remove_power->setEnabled(false);
+		ui->tabWidget_construction->setTabEnabled(0, false);
+		ui->tabWidget_construction->setTabEnabled(1, false);
+		mainGame_graphicsScene->enableBuildMode(SolarPower);
+	}
+	else{
+		ui->button_place_power_2->setEnabled(true);
+		ui->button_remove_power->setEnabled(true);
+		ui->tabWidget_construction->setTabEnabled(0, true);
+		ui->tabWidget_construction->setTabEnabled(1, true);
+		mainGame_graphicsScene->disableBuildMode();
+	}
+}
+
+void MainWindow::on_button_place_power_2_clicked(bool checked)
+{
+	if(checked){
+		ui->button_place_power_1->setEnabled(false);
+		ui->button_remove_power->setEnabled(false);
+		ui->tabWidget_construction->setTabEnabled(0, false);
+		ui->tabWidget_construction->setTabEnabled(1, false);
+		mainGame_graphicsScene->enableBuildMode(NuclearPower);
+	}
+	else{
+		ui->button_place_power_1->setEnabled(true);
+		ui->button_remove_power->setEnabled(true);
+		ui->tabWidget_construction->setTabEnabled(0, true);
+		ui->tabWidget_construction->setTabEnabled(1, true);
+		mainGame_graphicsScene->disableBuildMode();
+	}
+}
+
+
+void MainWindow::on_button_remove_power_clicked(bool checked)
+{
+	if(checked){
+		ui->button_place_power_1->setEnabled(false);
+		ui->button_place_power_2->setEnabled(false);
+		ui->tabWidget_construction->setTabEnabled(0, false);
+		ui->tabWidget_construction->setTabEnabled(1, false);
+		mainGame_graphicsScene->enableDestroyMode(GridBuilding);
+	}
+	else{
+		ui->button_place_power_1->setEnabled(true);
+		ui->button_place_power_2->setEnabled(true);
+		ui->tabWidget_construction->setTabEnabled(0, true);
+		ui->tabWidget_construction->setTabEnabled(1, true);
+		mainGame_graphicsScene->disableDestroyMode();
+	}
+}
 
 void MainWindow::on_tabWidget_construction_currentChanged(int index)
 {
@@ -252,6 +323,23 @@ void MainWindow::on_tabWidget_main_currentChanged(int index)
 			mainGame_graphicsScene->showZones(ui->tabWidget_construction->currentIndex()==1);
 		}
 	}
+	else if(index == 2){
+		if(ui->button_place_power_1->isChecked()){
+			ui->button_place_power_1->setChecked(false);
+			on_button_place_power_1_clicked(false);
+		}
+		if(ui->button_place_power_2->isChecked()){
+			ui->button_place_power_2->setChecked(false);
+			on_button_place_power_2_clicked(false);
+		}
+		if(ui->button_remove_power->isChecked()){
+			ui->button_remove_power->setChecked(false);
+			on_button_remove_power_clicked(false);
+		}
+		if(mainGame_graphicsScene!=nullptr){
+			mainGame_graphicsScene->showZones(false);
+		}
+	}
 }
 
 void MainWindow::gameDateChanged(QDate newDate)
@@ -261,16 +349,29 @@ void MainWindow::gameDateChanged(QDate newDate)
 	ui->progressBar_date->setFormat(newDate.toString("MMM yyyy"));
 }
 
-void MainWindow::gameDemandsUpdated(int res, int maxRes, int com, int maxCom, int indu, int maxIndu)
+void MainWindow::gameDemandsUpdated(double residential, int residents, double commercial, double industrial)
 {
-	ui->progressBar_residential->setMaximum(maxRes);
-	ui->progressBar_residential->setValue(res);
+	ui->progressBar_residential->setValue(residential);
+	ui->progressBar_commercial->setValue(commercial);
+	ui->progressBar_industrial->setValue(industrial);
 
-	ui->progressBar_commercial->setMaximum(maxCom);
-	ui->progressBar_commercial->setValue(com);
+	QPalette palette = ui->label_population_variation->palette();
+	if(residents-this->residents > 0){ //Residents have increased
+		ui->label_population_variation->setText("+"+QString::number(residents - this->residents));
+		palette.setColor(ui->label_population_variation->foregroundRole(), Qt::green);
 
-	ui->progressBar_industrial->setMaximum(maxIndu);
-	ui->progressBar_industrial->setValue(indu);
+	}
+	else if(residents-this->residents == 0){
+		ui->label_population_variation->setText("");
+	}
+	else{ //Residents have decreased
+		ui->label_population_variation->setText("-"+QString::number(this->residents - residents));
+		palette.setColor(ui->label_population_variation->foregroundRole(), Qt::red);
+	}
+
+	ui->label_population_variation->setPalette(palette);
+	this->residents = residents;
+	ui->label_population->setText("Population : "+QString::number(residents));
 }
 
 

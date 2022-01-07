@@ -5,6 +5,13 @@ CustomGraphicsView::CustomGraphicsView(QWidget *parent): QGraphicsView(parent)
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+	QOpenGLWidget *gl = new QOpenGLWidget();
+	QSurfaceFormat format;
+	format.setSamples(256);
+	format.setSwapInterval(1);
+	gl->setFormat(format);
+	setViewport(gl);
 }
 
 void CustomGraphicsView::wheelEvent(QWheelEvent *event)

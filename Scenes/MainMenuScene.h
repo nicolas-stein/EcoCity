@@ -1,14 +1,12 @@
 #ifndef MAINMENUSCENE_H
 #define MAINMENUSCENE_H
 
-#include "Constants.h"
+#include "constants.h"
+
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
-#include <QPushButton>
 #include <QGraphicsProxyWidget>
-#include <QFont>
-#include <QBrush>
-#include <QColor>
+#include <QPushButton>
 
 class MainMenuScene : public QGraphicsScene
 {

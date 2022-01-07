@@ -1,9 +1,8 @@
 #include "zonesquare.h"
 
-ZoneSquare::ZoneSquare(int posX, int posY, ZoneType zoneType, QMap<ZoneType, QPixmap> *zonePixmaps) : GridSquare(Zone, posX, posY, ZONE_SQUARE_SIZE, ZONE_SQUARE_SIZE), zoneType(zoneType), zonePixmaps(zonePixmaps)
+ZoneSquare::ZoneSquare(int posX, int posY, ZoneType zoneType, RessourceManager *ressourceManager) : GridSquare(GridZone, posX, posY, ZONE_SQUARE_SIZE, ZONE_SQUARE_SIZE, ressourceManager), zoneType(zoneType)
 {
-	//pixmapItem = new QGraphicsPixmapItem(zonePixmaps->value(zoneType));
-	pixmapItem.setPixmap(zonePixmaps->value(zoneType));
+	pixmapItem.setPixmap(ressourceManager->getZonePixmaps()->value(zoneType));
 	pixmapItem.setPos(posX-ZONE_SQUARE_MARGIN/2, posY-ZONE_SQUARE_MARGIN/2);
 	pixmapItem.setZValue(20);
 	pixmapItem.setOpacity(0.6);
@@ -13,7 +12,7 @@ ZoneSquare::ZoneSquare(int posX, int posY, ZoneType zoneType, QMap<ZoneType, QPi
 void ZoneSquare::setZoneType(ZoneType zoneType)
 {
 	this->zoneType = zoneType;
-	pixmapItem.setPixmap(zonePixmaps->value(zoneType));
+	pixmapItem.setPixmap(ressourceManager->getZonePixmaps()->value(zoneType));
 }
 
 ZoneType ZoneSquare::getZoneType() const
@@ -105,12 +104,12 @@ bool ZoneSquare::isZoneValid(ZoneSquare ***zoneGrid, RoadSquare ***roadGrid)
 	return false;
 }
 
-Building *ZoneSquare::getBuilding()
+ZoneBuilding *ZoneSquare::getBuilding()
 {
 	return building;
 }
 
-void ZoneSquare::setBuilding(Building *newBuilding)
+void ZoneSquare::setBuilding(ZoneBuilding *newBuilding)
 {
 	building = newBuilding;
 }

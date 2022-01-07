@@ -1,19 +1,17 @@
 #ifndef MAINGAMESCENE_H
 #define MAINGAMESCENE_H
 
-#include "Game/gamelogicthread.h"
+#include "constants.h"
+#include "Game/Building/building.h"
 #include "customgraphicsview.h"
-#include "Constants.h"
+#include "Game/gamelogicthread.h"
 #include "Game/buildcursor.h"
+#include "Game/Grid/zonesquare.h"
+#include "Game/Building/ServiceBuilding/powerbuilding.h"
+
 #include <QGraphicsScene>
-#include <QGraphicsRectItem>
-#include <QGraphicsPixmapItem>
-#include <QGraphicsItemGroup>
-#include <QGraphicsItem>
-#include <QObject>
-#include <QMap>
-#include <QList>
 #include <QGraphicsSceneMouseEvent>
+#include <QApplication>
 
 class MainGameScene : public QGraphicsScene
 {
@@ -25,6 +23,7 @@ public:
 	void startGameLogic();
 	void enableBuildMode(RoadType roadType);
 	void enableBuildMode(ZoneType zoneType);
+	void enableBuildMode(PowerType powerType);
 	void disableBuildMode();
 
 	void enableDestroyMode(GridType gridType);
@@ -52,7 +51,8 @@ private:
 	bool destroyMode = false;
 
 private slots:
-	void requestBuildSquare(GridSquare *gridSquare);
+	void requestBuildSquare(GridSquare *square);
+	void requestBuildBuilding(Building *building);
 	void zoneSquareCreated(ZoneSquare *zoneSquare);
 	void zoneSquareRemoved(ZoneSquare *zoneSquare);
 	void changeZoneSquareType(ZoneSquare *zoneSquare);
@@ -67,7 +67,7 @@ protected:
 
 signals:
 	void gameDateChanged(QDate newDate);
-	void gameDemandsUpdated(int res, int maxRes, int com, int maxCom, int indu, int maxIndu);
+	void gameDemandsUpdated(double residential, int residents, double commercial, double industrial);
 };
 
 #endif // MAINGAMESCENE_H

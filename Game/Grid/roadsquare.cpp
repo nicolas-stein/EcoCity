@@ -1,8 +1,8 @@
 #include "roadsquare.h"
 
-RoadSquare::RoadSquare(int posX, int posY, RoadType roadType, QMap<RoadType, QMap<RoadAngle, QPixmap> > *roadPixmaps): GridSquare(Road, posX, posY, ROAD_SQUARE_SIZE, ROAD_SQUARE_SIZE), roadType(roadType), roadPixmaps(roadPixmaps)
+RoadSquare::RoadSquare(int posX, int posY, RoadType roadType, RessourceManager *ressourceManager): GridSquare(GridRoad, posX, posY, ROAD_SQUARE_SIZE, ROAD_SQUARE_SIZE, ressourceManager), roadType(roadType)
 {
-	pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Cross));
+	pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Cross));
 	pixmapItem.setPos(posX-ROAD_SQUARE_MARGIN/2, posY-ROAD_SQUARE_MARGIN/2);
 	pixmapItem.setZValue(10);
 }
@@ -21,36 +21,36 @@ void RoadSquare::updatePixmap(RoadSquare ***roadGrid)
 		if(connectedBottom){
 			if(connectedLeft){
 				if(connectedRight){
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Cross));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Cross));
 				}
 				else{
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(TJunction).transformed(QTransform().rotate(90)));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(TJunction).transformed(QTransform().rotate(90)));
 				}
 			}
 			else{
 				if(connectedRight){
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(TJunction).transformed(QTransform().rotate(-90)));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(TJunction).transformed(QTransform().rotate(-90)));
 				}
 				else{
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Straight).transformed(QTransform().rotate(90)));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Straight).transformed(QTransform().rotate(90)));
 				}
 			}
 		}
 		else{
 			if(connectedRight){
 				if(connectedLeft){
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(TJunction).transformed(QTransform().rotate(180)));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(TJunction).transformed(QTransform().rotate(180)));
 				}
 				else{
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Turn).transformed(QTransform().rotate(-90)));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Turn).transformed(QTransform().rotate(-90)));
 				}
 			}
 			else{
 				if(connectedLeft){
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Turn).transformed(QTransform().rotate(180)));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Turn).transformed(QTransform().rotate(180)));
 				}
 				else{
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Straight).transformed(QTransform().rotate(-90)));	//Dead end from top
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Straight).transformed(QTransform().rotate(-90)));	//Dead end from top
 				}
 			}
 		}
@@ -59,36 +59,36 @@ void RoadSquare::updatePixmap(RoadSquare ***roadGrid)
 		if(connectedBottom){
 			if(connectedLeft){
 				if(connectedRight){
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(TJunction));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(TJunction));
 				}
 				else{
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Turn).transformed(QTransform().rotate(90)));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Turn).transformed(QTransform().rotate(90)));
 				}
 			}
 			else{
 				if(connectedRight){
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Turn));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Turn));
 				}
 				else{
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Straight).transformed(QTransform().rotate(90))); //Dead end from bottom
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Straight).transformed(QTransform().rotate(90))); //Dead end from bottom
 				}
 			}
 		}
 		else{
 			if(connectedLeft){
 				if(connectedRight){
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Straight));
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Straight));
 				}
 				else{
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Straight)); //Dead end from left
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Straight)); //Dead end from left
 				}
 			}
 			else{
 				if(connectedRight){
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Straight)); //Dead end from right
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Straight)); //Dead end from right
 				}
 				else{
-					pixmapItem.setPixmap(roadPixmaps->value(roadType).value(Cross)); //Nothing connected
+					pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Cross)); //Nothing connected
 				}
 			}
 		}
