@@ -5,11 +5,13 @@
 #include "Game/ressourcemanager.h"
 
 #include <QGraphicsPixmapItem>
+#include <QPainter>
 
 class Building
 {
 public:
 	Building(int posX, int posY, int width, int height, BuildingType buildingType, RessourceManager *ressourceManager);
+    virtual ~Building(){};
 
 	QGraphicsPixmapItem *getPixmapItem();
 
@@ -22,17 +24,20 @@ public:
 	int getWidth() const;
 	int getHeight() const;
 
+	virtual void updatePixmap(bool showToolTips) = 0;
+
 private :
 	int posX;
 	int posY;
 	BuildingType buildingType;
-	RessourceManager *ressourceManager;
 
 
 protected :
+	RessourceManager *ressourceManager;
 	QGraphicsPixmapItem pixmapItem;
 	int width;
 	int height;
+	bool connectedToPower = false;
 };
 
 #endif // BUILDING_H

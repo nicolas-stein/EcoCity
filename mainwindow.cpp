@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui->setupUi(this);
 	ui->tabWidget_main->setVisible(false);
+	ui->statusBar->setVisible(false);
 
 	mainMenu_graphicsScene = new MainMenuScene(this);
 	connect(mainMenu_graphicsScene, &MainMenuScene::requestStart, this, &MainWindow::startGame);
@@ -14,10 +15,14 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ui->graphicsView->setScene(mainMenu_graphicsScene);
 	setAttribute(Qt::WA_AlwaysShowToolTips, true);
+
+	audioManager.startMusic();
+	audioManager.start();
 }
 
 MainWindow::~MainWindow()
 {
+	audioManager.quit();
 	delete ui;
 	delete mainMenu_graphicsScene;
 	if(mainGame_graphicsScene!=nullptr){
@@ -29,11 +34,13 @@ void MainWindow::startGame()
 {
 	if(ui->graphicsView->scene() == mainMenu_graphicsScene && mainGame_graphicsScene == nullptr){
 		ui->tabWidget_main->setVisible(true);
+		ui->statusBar->setVisible(true);
 		ui->tabWidget_main->setCurrentIndex(0);
 		ui->tabWidget_construction->setCurrentIndex(0);
 		mainGame_graphicsScene = new MainGameScene(ui->graphicsView);
 		connect(mainGame_graphicsScene, SIGNAL(gameDateChanged(QDate)), this, SLOT(gameDateChanged(QDate)));
 		connect(mainGame_graphicsScene, SIGNAL(gameDemandsUpdated(double,int,double,double)), this, SLOT(gameDemandsUpdated(double,int,double,double)));
+		connect(mainGame_graphicsScene, SIGNAL(playSoundEffect(SoundEffects)), &audioManager, SLOT(playSoundEffect(SoundEffects)));
 
 		ui->graphicsView->setScene(mainGame_graphicsScene);
 		ui->graphicsView->setPanEnable(true);
@@ -281,6 +288,8 @@ void MainWindow::on_tabWidget_construction_currentChanged(int index)
 void MainWindow::on_tabWidget_main_currentChanged(int index)
 {
 	if(index == 0){
+		ui->statusBar->clearMessage();
+		mainGame_graphicsScene->setGameSpeed(gameSpeed);
 		if(ui->button_place_road_1->isChecked()){
 			ui->button_place_road_1->setChecked(false);
 			on_button_place_road_1_clicked(false);
@@ -319,11 +328,16 @@ void MainWindow::on_tabWidget_main_currentChanged(int index)
 		}
 	}
 	else if(index == 1){
+		ui->statusBar->showMessage("Mode construction : jeu en pause");
+		ui->statusBar->setStyleSheet("font-weight: bold; color: red");
+		mainGame_graphicsScene->setGameSpeed(0);
 		if(mainGame_graphicsScene!=nullptr){
 			mainGame_graphicsScene->showZones(ui->tabWidget_construction->currentIndex()==1);
 		}
 	}
 	else if(index == 2){
+		ui->statusBar->clearMessage();
+		mainGame_graphicsScene->setGameSpeed(gameSpeed);
 		if(ui->button_place_power_1->isChecked()){
 			ui->button_place_power_1->setChecked(false);
 			on_button_place_power_1_clicked(false);
@@ -373,7 +387,6 @@ void MainWindow::gameDemandsUpdated(double residential, int residents, double co
 	this->residents = residents;
 	ui->label_population->setText("Population : "+QString::number(residents));
 }
-
 
 void MainWindow::on_pushButton_gameSpeed_clicked()
 {

@@ -35,6 +35,7 @@ MainGameScene::MainGameScene(CustomGraphicsView *parent) : QGraphicsScene{parent
 	connect(gameLogicThread.getMapManager(), SIGNAL(zoneSquareCreated(ZoneSquare*)), this, SLOT(zoneSquareCreated(ZoneSquare*)));
 	connect(gameLogicThread.getMapManager(), SIGNAL(zoneSquareRemoved(ZoneSquare*)), this, SLOT(zoneSquareRemoved(ZoneSquare*)));
 	connect(gameLogicThread.getMapManager(), SIGNAL(buildingCreated(Building*)), this, SLOT(buildingCreated(Building*)));
+	connect(gameLogicThread.getMapManager(), SIGNAL(buildingRemoved(Building*)), this, SLOT(buildingRemoved(Building*)));
 
 	connect(&gameLogicThread, SIGNAL(gameDateChanged(QDate)), this, SIGNAL(gameDateChanged(QDate)));
 	connect(&gameLogicThread, SIGNAL(gameDemandsUpdated(double,int,double,double)), this, SIGNAL(gameDemandsUpdated(double,int,double,double)));
@@ -42,8 +43,35 @@ MainGameScene::MainGameScene(CustomGraphicsView *parent) : QGraphicsScene{parent
 
 MainGameScene::~MainGameScene()
 {
-	gameLogicThread.exit(0);
+	gameLogicThread.quit();
 	gameLogicThread.wait(2000);
+	for(int x=0;x<TERRAIN_GRID_SIZE;x++){
+		for(int y=0;y<TERRAIN_GRID_SIZE;y++){
+			removeItem(terrainPixmapItems[x][y]);
+		}
+		delete[] terrainPixmapItems[x];
+	}
+	delete[] terrainPixmapItems;
+
+	for(int x=0;x<ROAD_GRID_SIZE;x++){
+		for(int y=0;y<ROAD_GRID_SIZE;y++){
+			if(roadPixmapItems[x][y] != nullptr){
+				removeItem(roadPixmapItems[x][y]);
+			}
+		}
+		delete[] roadPixmapItems[x];
+	}
+	delete[] roadPixmapItems;
+
+	for(int x=0;x<ZONE_GRID_SIZE;x++){
+		for(int y=0;y<ZONE_GRID_SIZE;y++){
+			if(zonePixmapItems[x][y] != nullptr){
+				removeItem(zonePixmapItems[x][y]);
+			}
+		}
+		delete[] zonePixmapItems[x];
+	}
+	delete[] zonePixmapItems;
 }
 
 void MainGameScene::startGameLogic()
@@ -79,7 +107,7 @@ void MainGameScene::disableBuildMode()
 {
 	buildingMode = false;
 	removeItem(&buildSquare);
-	disconnect(&buildSquare);
+	buildSquare.disconnect();
 }
 
 void MainGameScene::enableDestroyMode(GridType gridType)
@@ -116,6 +144,7 @@ void MainGameScene::requestBuildSquare(GridSquare *gridSquare)
 		if(result->getGridType()==GridRoad){
 			roadPixmapItems[result->getPosX()/ROAD_SQUARE_SIZE][result->getPosY()/ROAD_SQUARE_SIZE] = result->getPixmapItem();
 			addItem(result->getPixmapItem());
+			emit playSoundEffect(RoadPlacement);
 		}
 	}
 }
@@ -158,15 +187,10 @@ void MainGameScene::changeZoneSquareType(ZoneSquare *zoneSquare)
 		if(oldSquare->getZoneType() != zoneSquare->getZoneType()){
 			oldSquare->setZoneType(zoneSquare->getZoneType());
 			if(oldSquare->getBuilding()!=nullptr){
-				ZoneBuilding *building = oldSquare->getBuilding();
-				for(int i=0;i<building->getCoveringZones().count();i++){
-					building->getCoveringZones().value(i)->setBuilding(nullptr);
-				}
-				if(buildingList.contains(building->getPixmapItem())){
-					buildingList.removeAll(building->getPixmapItem());
-				}
-				delete building;
+				buildingRemoved(oldSquare->getBuilding());
+				gameLogicThread.getMapManager()->requestDestroyBuilding(oldSquare->getBuilding());
 			}
+			emit playSoundEffect(ZonePlacement);
 		}
 	}
 }
@@ -175,6 +199,12 @@ void MainGameScene::buildingCreated(Building *building)
 {
 	buildingList.append(building->getPixmapItem());
 	addItem(building->getPixmapItem());
+}
+
+void MainGameScene::buildingRemoved(Building *building)
+{
+	buildingList.removeAll(building->getPixmapItem());
+	removeItem(building->getPixmapItem());
 }
 
 void MainGameScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)

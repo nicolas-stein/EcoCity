@@ -3,6 +3,8 @@
 Building::Building(int posX, int posY, int width, int height, BuildingType buildingType, RessourceManager *ressourceManager): posX(posX), posY(posY), buildingType(buildingType), ressourceManager(ressourceManager), width(width), height(height)
 {
 	pixmapItem.setPos(posX-BUILDING_MARGIN/2, posY-BUILDING_MARGIN/2);
+	pixmapItem.setZValue(10);
+	pixmapItem.setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 }
 
 QGraphicsPixmapItem *Building::getPixmapItem()

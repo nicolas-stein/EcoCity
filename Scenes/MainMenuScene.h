@@ -7,6 +7,8 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
+#include <QGraphicsTextItem>
+#include <QSlider>
 
 class MainMenuScene : public QGraphicsScene
 {
@@ -18,9 +20,13 @@ private:
 	QGraphicsPixmapItem titlePixmap;
 	QPushButton startButton;
 	QPushButton quitButton;
+	QSlider musicSlider;
+	QSlider soundSlider;
 
 	QGraphicsProxyWidget *startButtonItem;
 	QGraphicsProxyWidget *quitButtonItem;
+	QGraphicsProxyWidget *musicSliderItem;
+	QGraphicsProxyWidget *soundSliderItem;
 
 	void startButton_on_clicked();
 	void quitButton_on_clicked();

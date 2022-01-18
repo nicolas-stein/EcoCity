@@ -7,6 +7,7 @@ RessourceManager::RessourceManager()
 
 void RessourceManager::loadRessources()
 {
+	loadTooltipsPixmaps();
 	loadTerrainPixmaps();
 	loadZonePixmaps();
 
@@ -19,6 +20,11 @@ void RessourceManager::loadRessources()
 	loadIndustrialPixmaps();
 
 	loadPowerPixmaps();
+}
+
+QMap<Tooltips, QPixmap> *RessourceManager::getTooltipsPixmaps()
+{
+	return &tooltipsPixmaps;
 }
 
 QMap<TerrainType, QPixmap> *RessourceManager::getTerrainPixmaps()
@@ -41,7 +47,7 @@ QMap<ZoneType, QList<QPixmap> > *RessourceManager::getZoneBuildingPixmaps()
 	return &zoneBuildingPixmaps;
 }
 
-QPixmap RessourceManager::getZoneBuildingPixmap(ZoneType zoneType, int widthGrid, int heightGrid)
+QPixmap RessourceManager::getZoneBuildingPixmap(ZoneType zoneType, int widthGrid, int heightGrid, unsigned randomPixmapNumber)
 {
 	if(zoneType == Residential){
 		if(widthGrid == 4 && heightGrid == 4){
@@ -70,7 +76,7 @@ QPixmap RessourceManager::getZoneBuildingPixmap(ZoneType zoneType, int widthGrid
 	}
 	else if(zoneType == Industrial){
 		if(widthGrid == 4 && heightGrid == 4){
-			return industrialPixmaps.value(0+QRandomGenerator::global()->generate()%2);
+			return industrialPixmaps.value(0+randomPixmapNumber%2);
 		}
 		else if(widthGrid == 2 && heightGrid == 3){
 			return industrialPixmaps.value(2);
@@ -88,6 +94,12 @@ QPixmap RessourceManager::getZoneBuildingPixmap(ZoneType zoneType, int widthGrid
 QMap<PowerType, QPixmap> *RessourceManager::getPowerBuildingPixmaps()
 {
 	return &powerBuildingPixmaps;
+}
+
+void RessourceManager::loadTooltipsPixmaps()
+{
+	tooltipsPixmaps[NoRoad] = QPixmap(":/pixmaps/tooltips/no_road").scaled(ROAD_SQUARE_SIZE, ROAD_SQUARE_SIZE);
+	tooltipsPixmaps[NoPower] = QPixmap(":/pixmaps/tooltips/no_power").scaled(ROAD_SQUARE_SIZE, ROAD_SQUARE_SIZE);
 }
 
 void RessourceManager::loadTerrainPixmaps()

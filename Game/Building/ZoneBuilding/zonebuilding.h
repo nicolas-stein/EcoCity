@@ -14,6 +14,16 @@ public:
 	const QList<ZoneSquare *> &getCoveringZones() const;
 
 	ZoneType getZoneType() const;
+	void updatePixmap(bool showToolTips);
+
+	double getPowerConsumption() const;
+	void setConnectedToPower(bool isConnectedToPower);
+
+protected:
+	int widthGrid();
+	int heightGrid();
+	unsigned randomPixmapNumber;
+	double powerConsumption;
 
 private :
 	QList<ZoneSquare*> coveringZones;

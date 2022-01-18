@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "Scenes/mainmenuscene.h"
 #include "Scenes/maingamescene.h"
+#include "Game/audiomanager.h"
 
 #include <QMainWindow>
 
@@ -26,8 +27,9 @@ private:
 	Ui::MainWindow *ui;
 
 	double gameSpeed = 1;
-
 	int residents = 0;
+
+	AudioManager audioManager;
 
 private slots:
 	void startGame();
@@ -43,11 +45,13 @@ private slots:
 	void on_tabWidget_construction_currentChanged(int index);
 	void on_tabWidget_main_currentChanged(int index);
 
-	void gameDateChanged(QDate newDate);
-	void gameDemandsUpdated(double residential, int residents, double commercial, double industrial);
-	void on_pushButton_gameSpeed_clicked();
 	void on_button_place_power_1_clicked(bool checked);
 	void on_button_place_power_2_clicked(bool checked);
 	void on_button_remove_power_clicked(bool checked);
+	void on_pushButton_gameSpeed_clicked();
+
+	void gameDateChanged(QDate newDate);
+	void gameDemandsUpdated(double residential, int residents, double commercial, double industrial);
+
 };
 #endif // MAINWINDOW_H

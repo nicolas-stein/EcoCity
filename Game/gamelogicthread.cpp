@@ -9,6 +9,11 @@ GameLogicThread::GameLogicThread()
 	mapManager.initMap(&ressourceManager);
 }
 
+GameLogicThread::~GameLogicThread()
+{
+	delete updateTimer;
+}
+
 RessourceManager *GameLogicThread::getRessourceManager()
 {
 	return &ressourceManager;
@@ -125,8 +130,37 @@ void GameLogicThread::updateGameDemands()
 	emit gameDemandsUpdated(residential, totalResidents, commercial, industrial);
 }
 
+void GameLogicThread::updateBuildingsPower()
+{
+	QList<ServiceBuilding*> serviceBuildings = mapManager.getServiceBuildings();
+	QList<ZoneBuilding*> zoneBuildings = mapManager.getZoneBuildings();
+
+	double totalElectricalProduction = 0;
+
+	for(int i=0;i<serviceBuildings.size();i++){
+		if(serviceBuildings.value(i)->getServiceType()==Power){
+			totalElectricalProduction += ((PowerBuilding*)serviceBuildings.value(i))->getPowerProduction();
+		}
+	}
+	double electricalConsumption = 0;
+
+	for(int i=0;i<zoneBuildings.size();i++){
+		if(totalElectricalProduction-electricalConsumption > zoneBuildings.value(i)->getPowerConsumption()){
+			zoneBuildings.value(i)->setConnectedToPower(true);
+			electricalConsumption += zoneBuildings.value(i)->getPowerConsumption();
+		}
+		else{
+			zoneBuildings.value(i)->setConnectedToPower(false);
+		}
+	}
+}
+
 void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 {
+	if(gameSpeed == 0){
+		return;
+	}
+
 	tickCounter++;
 	if(tickCounter >= 60/gameSpeed){
 		tickCounter = 0;
@@ -135,9 +169,12 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 	if(tickCounter == 0){ //Every seconds
 		//QElapsedTimer timer;
 		//timer.start();
+
+		//Game date update
 		gameDate = gameDate.addDays(1);
 		emit gameDateChanged(gameDate);
 
+		//Generating new zone buildings
 		if(QRandomGenerator::global()->generate()%100 > 60){
 			mapManager.generateNewZoneBuilding(Residential);
 		}
@@ -150,7 +187,12 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 			mapManager.generateNewZoneBuilding(Industrial);
 		}
 
+		//Updating game demands
 		updateGameDemands();
+
+		//Updating buildings power
+		updateBuildingsPower();
+
 		//qDebug() << "Time taken : " << timer.elapsed() << "ms";
 	}
 }

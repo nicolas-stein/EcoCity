@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/sounds/music">
+        <file alias="music_1">Files/Sounds/Music/music_1.mp3</file>
+        <file alias="music_2">Files/Sounds/Music/music_2.mp3</file>
+        <file alias="music_3">Files/Sounds/Music/music_3.mp3</file>
+        <file alias="music_4">Files/Sounds/Music/music_4.mp3</file>
+    </qresource>
+    <qresource prefix="/sounds/sound_effect">
+        <file alias="placeRoad">Files/Sounds/Sound_effect/PlaceRoad.wav</file>
+        <file alias="placeZone">Files/Sounds/Sound_effect/PlaceZone.wav</file>
+    </qresource>
+</RCC>

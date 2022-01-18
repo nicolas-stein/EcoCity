@@ -5,6 +5,52 @@ MapManager::MapManager()
 
 }
 
+MapManager::~MapManager()
+{
+	//Delete terrain
+	for(int x=0;x<TERRAIN_GRID_SIZE;x++){
+		for(int y=0;y<TERRAIN_GRID_SIZE;y++){
+			delete terrainGrid[x][y];
+		}
+		delete[] terrainGrid[x];
+	}
+	delete[] terrainGrid;
+
+	//Delete roads
+	for(int x=0;x<ROAD_GRID_SIZE;x++){
+		for(int y=0;y<ROAD_GRID_SIZE;y++){
+			if(roadGrid[x][y] != nullptr){
+				delete roadGrid[x][y];
+			}
+		}
+		delete[] roadGrid[x];
+	}
+	delete[] roadGrid;
+
+	//Delete zones
+	for(int x=0;x<ZONE_GRID_SIZE;x++){
+		for(int y=0;y<ZONE_GRID_SIZE;y++){
+			if(zoneGrid[x][y] != nullptr){
+                if(zoneGrid[x][y]->getBuilding()!=nullptr){
+                    ZoneBuilding *building = zoneGrid[x][y]->getBuilding();
+                    for(int i=0;i<building->getCoveringZones().size();i++){
+                        building->getCoveringZones().value(i)->setBuilding(nullptr);
+                    }
+                    delete building;
+                }
+				delete zoneGrid[x][y];
+			}
+		}
+		delete[] zoneGrid[x];
+	}
+	delete[] zoneGrid;
+
+    //Delete service buildings
+    for(int i=0;i<serviceBuildings.size();i++){
+        delete serviceBuildings[i];
+    }
+}
+
 void MapManager::initMap(RessourceManager *ressourceManager)
 {
 	this->ressourceManager = ressourceManager;
@@ -44,7 +90,7 @@ void MapManager::initMap(RessourceManager *ressourceManager)
 GridSquare* MapManager::requestBuildSquare(GridSquare *square)
 {
 	if(square->getGridType()==GridRoad){
-		if(roadGrid[square->getPosX()/ROAD_SQUARE_SIZE][square->getPosY()/ROAD_SQUARE_SIZE] == nullptr){
+		if(roadGrid[square->getPosX()/ROAD_SQUARE_SIZE][square->getPosY()/ROAD_SQUARE_SIZE] == nullptr && !isThereServiceBuilding(square->getPosX(), square->getPosY())){
 			if((terrainGrid[square->getPosX()/TERRAIN_SQUARE_SIZE][square->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Grass || terrainGrid[square->getPosX()/TERRAIN_SQUARE_SIZE][square->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Sand ||terrainGrid[square->getPosX()/TERRAIN_SQUARE_SIZE][square->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Rock)
 					&& (terrainGrid[square->getPosX()/TERRAIN_SQUARE_SIZE+1][square->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Grass || terrainGrid[square->getPosX()/TERRAIN_SQUARE_SIZE+1][square->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Sand ||terrainGrid[square->getPosX()/TERRAIN_SQUARE_SIZE+1][square->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Rock)
 					&& (terrainGrid[square->getPosX()/TERRAIN_SQUARE_SIZE][square->getPosY()/TERRAIN_SQUARE_SIZE+1]->getTerrainType() == Grass || terrainGrid[square->getPosX()/TERRAIN_SQUARE_SIZE][square->getPosY()/TERRAIN_SQUARE_SIZE+1]->getTerrainType() == Sand ||terrainGrid[square->getPosX()/TERRAIN_SQUARE_SIZE][square->getPosY()/TERRAIN_SQUARE_SIZE+1]->getTerrainType() == Rock)
@@ -70,6 +116,10 @@ GridSquare* MapManager::requestBuildSquare(GridSquare *square)
 					}
 				}
 
+				for(int i=0;i<serviceBuildings.size();i++){
+					serviceBuildings.at(i)->updateConnectedToRoad(roadGrid);
+				}
+
 				return newSquare;
 			}
 		}
@@ -79,12 +129,30 @@ GridSquare* MapManager::requestBuildSquare(GridSquare *square)
 
 Building *MapManager::requestBuildBuilding(Building *building)
 {
-	if(building->getBuildingType() == BuildingService){
+	if(building->getBuildingType() == BuildingService && canPutServiceBuilding(building)){
 		ServiceBuilding* newBuilding = nullptr;
 		if(((ServiceBuilding*)building)->getServiceType() == Power){
 			newBuilding = new PowerBuilding(building->getPosX(), building->getPosY(), ressourceManager, ((PowerBuilding*)building)->getPowerType());
 			serviceBuildings.append(newBuilding);
 		}
+
+		for(int i = building->getPosX()/ZONE_SQUARE_SIZE; i < (building->getPosX()+building->getWidth())/ZONE_SQUARE_SIZE; i++){
+			for(int j = building->getPosY()/ZONE_SQUARE_SIZE; j < (building->getPosY()+building->getHeight())/ZONE_SQUARE_SIZE; j++){
+				if(zoneGrid[i][j] != nullptr && zoneGrid[i][j]->getZoneType() != None){
+					zoneGrid[i][j]->setZoneType(None);
+					if(zoneGrid[i][j]->getBuilding()!=nullptr){
+						ZoneBuilding *building = zoneGrid[i][j]->getBuilding();
+						for(int i=0;i<building->getCoveringZones().count();i++){
+							building->getCoveringZones().value(i)->setBuilding(nullptr);
+						}
+						emit buildingRemoved(building);
+						delete building;
+					}
+				}
+			}
+		}
+		newBuilding->updateConnectedToRoad(roadGrid);
+		newBuilding->updatePixmap(true);
 		return newBuilding;
 	}
 	return nullptr;
@@ -267,13 +335,20 @@ void MapManager::requestDestroyRoad(RoadSquare *roadSquare)
 	}
 
 	delete roadSquare;
+
+	for(int i=0;i<serviceBuildings.size();i++){
+		serviceBuildings.at(i)->updateConnectedToRoad(roadGrid);
+	}
 }
 
 bool MapManager::generateNewZoneBuilding(ZoneType zoneType)
 {
 	for(int x=0;x<ZONE_GRID_SIZE;x++){
 		for(int y=0;y<ZONE_GRID_SIZE;y++){
-			if(zoneType == Residential){
+			if(zoneGrid[x][y] == nullptr || zoneGrid[x][y]->getZoneType()==None || zoneGrid[x][y]->getBuilding() != nullptr){
+				continue;
+			}
+			else if(zoneType == Residential){
 				if(putZoneBuilding(x, y, 4, 8, zoneType) || putZoneBuilding(x, y, 4, 4, zoneType) || putZoneBuilding(x, y, 1, 2, zoneType) || putZoneBuilding(x, y, 2, 1, zoneType)){
 					return true;
 				}
@@ -324,6 +399,7 @@ bool MapManager::putZoneBuilding(int x, int y, int widthGrid, int heightGrid, Zo
 	else{
 		newBuilding = new IndustrialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*widthGrid, ZONE_SQUARE_SIZE*heightGrid, ressourceManager);
 	}
+	newBuilding->updatePixmap(true);
 	for(int i=x;i<x+widthGrid;i++){
 		for(int j=y;j<y+heightGrid;j++){
 			zoneGrid[i][j]->setBuilding(newBuilding);
@@ -333,6 +409,70 @@ bool MapManager::putZoneBuilding(int x, int y, int widthGrid, int heightGrid, Zo
 	zoneBuildings.append(newBuilding);
 	emit buildingCreated(newBuilding);
 	return true;
+}
+
+bool MapManager::canPutServiceBuilding(Building *building)
+{
+	int x = building->getPosX();
+	int y = building->getPosY();
+	int width = building->getWidth();
+	int height = building->getHeight();
+
+	if(x < 0 || y < 0 || x+width >= TERRAIN_SQUARE_SIZE*TERRAIN_GRID_SIZE || y+height >= TERRAIN_SQUARE_SIZE*TERRAIN_GRID_SIZE){
+		return false;
+	}
+
+	//Vérification du terrain
+	for(int i=x/TERRAIN_SQUARE_SIZE; i < (x+width)/TERRAIN_SQUARE_SIZE; i++){
+		for(int j=y/TERRAIN_SQUARE_SIZE; j < (y+height)/TERRAIN_SQUARE_SIZE ; j++){
+			if(terrainGrid[i][j]->getTerrainType() == Water || terrainGrid[i][j]->getTerrainType() == Mountain){
+				return false;
+			}
+		}
+	}
+	
+	//Vérification des routes
+	for(int i = x/ROAD_SQUARE_SIZE ; i < (x+width)/ROAD_SQUARE_SIZE ; i++){
+		for(int j = y/ROAD_SQUARE_SIZE; j < (y+height)/ROAD_SQUARE_SIZE; j++){
+			if(roadGrid[i][j] != nullptr){
+				return false;
+			}
+		}
+	}
+
+	//Vérification des autres buildings
+	for(int i=0;i<serviceBuildings.size();i++){
+		if(x >= serviceBuildings.at(i)->getPosX() && x < serviceBuildings.at(i)->getPosX() + serviceBuildings.at(i)->getWidth()
+				&& y >= serviceBuildings.at(i)->getPosY() && y < serviceBuildings.at(i)->getPosY() + serviceBuildings.at(i)->getHeight()){
+			return false;
+		}
+		else if(x+width >= serviceBuildings.at(i)->getPosX() && x+width < serviceBuildings.at(i)->getPosX() + serviceBuildings.at(i)->getWidth()
+				&& y >= serviceBuildings.at(i)->getPosY() && y < serviceBuildings.at(i)->getPosY() + serviceBuildings.at(i)->getHeight()){
+			return false;
+		}
+		else if(x >= serviceBuildings.at(i)->getPosX() && x < serviceBuildings.at(i)->getPosX() + serviceBuildings.at(i)->getWidth()
+				&& y+height >= serviceBuildings.at(i)->getPosY() && y+height < serviceBuildings.at(i)->getPosY() + serviceBuildings.at(i)->getHeight()){
+			return false;
+		}
+		else if(x+width >= serviceBuildings.at(i)->getPosX() && x+width < serviceBuildings.at(i)->getPosX() + serviceBuildings.at(i)->getWidth()
+				&& y+height >= serviceBuildings.at(i)->getPosY() && y+height < serviceBuildings.at(i)->getPosY() + serviceBuildings.at(i)->getHeight()){
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool MapManager::isThereServiceBuilding(int x, int y)
+{
+	for(int i=0;i<serviceBuildings.size();i++){
+		if(x >= serviceBuildings.at(i)->getPosX() && x < serviceBuildings.at(i)->getPosX() + serviceBuildings.at(i)->getWidth()
+				&& y >= serviceBuildings.at(i)->getPosY() && y < serviceBuildings.at(i)->getPosY() + serviceBuildings.at(i)->getHeight()){
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void MapManager::requestDestroyBuilding(Building *building)
@@ -350,6 +490,11 @@ void MapManager::requestDestroyBuilding(Building *building)
 QList<ZoneBuilding*> MapManager::getZoneBuildings()
 {
 	return zoneBuildings;
+}
+
+QList<ServiceBuilding *> MapManager::getServiceBuildings()
+{
+	return serviceBuildings;
 }
 
 TerrainSquare ***MapManager::getTerrainGrid()

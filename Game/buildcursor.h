@@ -18,6 +18,7 @@ class BuildCursor : public QObject, public QGraphicsPixmapItem
 	Q_OBJECT
 public:
 	BuildCursor();
+	~BuildCursor();
 	void setSquareToBuild(GridSquare *newSquareToBuild);
 	void setBuildingToBuild(Building *building);
 	void setPosition(int x, int y);

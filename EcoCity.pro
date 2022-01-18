@@ -1,4 +1,4 @@
-QT       += core gui openglwidgets
+QT       += core gui openglwidgets multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,6 +18,7 @@ SOURCES += \
     Game/Building/ZoneBuilding/residentialbuilding.cpp \
     Game/Grid/roadsquare.cpp \
     Game/Grid/zonesquare.cpp \
+    Game/audiomanager.cpp \
     Game/gamelogicthread.cpp \
     Game/Grid/gridsquare.cpp \
     Game/Grid/terrainsquare.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     Game/Building/ServiceBuilding/powerbuilding.h \
     Game/Building/ServiceBuilding/servicebuilding.h \
     Game/Building/ZoneBuilding/zonebuilding.h \
+    Game/audiomanager.h \
     Game/mapmanager.h \
     Game/ressourcemanager.h \
     constants.h \
@@ -61,6 +63,8 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-#OTHER_FILES += \
-RESOURCES += \
-    ressources.qrc
+#RESOURCES += \
+OTHER_FILES += \
+    ressources_audio.qrc \
+    ressources_graphics.qrc \
+    ressources_others.qrc

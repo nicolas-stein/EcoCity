@@ -17,17 +17,19 @@ class GameLogicThread : public QThread
 	Q_OBJECT
 public:
 	GameLogicThread();
+	~GameLogicThread();
 
 	RessourceManager *getRessourceManager();
 	MapManager *getMapManager();
 
 	void setGameSpeed(double newGameSpeed);
 	void updateGameDemands();
+	void updateBuildingsPower();
 
 protected:
 	void run();
 
-private:
+private:	
 	QTimer *updateTimer;
 
 	RessourceManager ressourceManager;

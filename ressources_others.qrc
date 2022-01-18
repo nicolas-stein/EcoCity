@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/fonts">
+        <file alias="gunplay-rg">Files/Fonts/gunplay-rg.ttf</file>
+    </qresource>
+</RCC>

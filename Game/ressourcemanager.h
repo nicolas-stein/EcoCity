@@ -15,6 +15,8 @@ public:
 
 	void loadRessources();
 
+	QMap<Tooltips, QPixmap> *getTooltipsPixmaps();
+
 	QMap<TerrainType, QPixmap> *getTerrainPixmaps();
 
 	QMap<RoadType, QMap<RoadAngle, QPixmap>> *getRoadPixmaps();
@@ -23,11 +25,13 @@ public:
 
 	QMap<ZoneType, QList<QPixmap>> *getZoneBuildingPixmaps();
 
-	QPixmap getZoneBuildingPixmap(ZoneType zoneType, int widthGrid, int heightGrid);
+	QPixmap getZoneBuildingPixmap(ZoneType zoneType, int widthGrid, int heightGrid, unsigned randomPixmapNumber);
 
 	QMap<PowerType, QPixmap> *getPowerBuildingPixmaps();
 
 private:
+	QMap<Tooltips, QPixmap> tooltipsPixmaps;
+
 	QMap<TerrainType, QPixmap> terrainPixmaps;
 	QMap<RoadAngle, QPixmap> twoLanesPixmaps;
 	QMap<RoadType, QMap<RoadAngle, QPixmap>> roadPixmaps;
@@ -39,6 +43,8 @@ private:
 	QList<QPixmap> industrialPixmaps;
 
 	QMap<PowerType, QPixmap> powerBuildingPixmaps;
+
+	void loadTooltipsPixmaps();
 
 	void loadTerrainPixmaps();
 	void loadZonePixmaps();

@@ -2,6 +2,7 @@
 
 ZoneSquare::ZoneSquare(int posX, int posY, ZoneType zoneType, RessourceManager *ressourceManager) : GridSquare(GridZone, posX, posY, ZONE_SQUARE_SIZE, ZONE_SQUARE_SIZE, ressourceManager), zoneType(zoneType)
 {
+	pixmapItem.setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 	pixmapItem.setPixmap(ressourceManager->getZonePixmaps()->value(zoneType));
 	pixmapItem.setPos(posX-ZONE_SQUARE_MARGIN/2, posY-ZONE_SQUARE_MARGIN/2);
 	pixmapItem.setZValue(20);

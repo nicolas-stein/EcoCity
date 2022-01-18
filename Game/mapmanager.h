@@ -19,6 +19,7 @@ class MapManager: public QObject
 	Q_OBJECT
 public:
 	MapManager();
+	~MapManager();
 
 	void initMap(RessourceManager *ressourceManager);
 
@@ -28,6 +29,7 @@ public:
 	ZoneSquare ***getZoneGrid();
 	RoadSquare ***getRoadGrid();
 	QList<ZoneBuilding*> getZoneBuildings();
+	QList<ServiceBuilding*> getServiceBuildings();
 
 	GridSquare *requestBuildSquare(GridSquare *square);
 	Building *requestBuildBuilding(Building *building);
@@ -37,6 +39,8 @@ public:
 
 	bool generateNewZoneBuilding(ZoneType zoneType);
 	bool putZoneBuilding(int x, int y, int widthGrid, int heightGrid, ZoneType zoneType);
+	bool canPutServiceBuilding(Building *building);
+	bool isThereServiceBuilding(int x, int y);
 	void requestDestroyBuilding(Building *building);
 
 private:
@@ -53,6 +57,7 @@ signals:
 	void zoneSquareCreated(ZoneSquare *zoneSquare);
 	void zoneSquareRemoved(ZoneSquare *zoneSquare);
 	void buildingCreated(Building *newBuilding);
+	void buildingRemoved(Building *building);
 };
 
 #endif // MAPMANAGER_H

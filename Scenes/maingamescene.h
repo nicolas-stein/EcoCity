@@ -57,6 +57,7 @@ private slots:
 	void zoneSquareRemoved(ZoneSquare *zoneSquare);
 	void changeZoneSquareType(ZoneSquare *zoneSquare);
 	void buildingCreated(Building *building);
+	void buildingRemoved(Building *building);
 	// QGraphicsScene interface
 protected:
 	void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -68,6 +69,7 @@ protected:
 signals:
 	void gameDateChanged(QDate newDate);
 	void gameDemandsUpdated(double residential, int residents, double commercial, double industrial);
+	void playSoundEffect(SoundEffects soundEffect);
 };
 
 #endif // MAINGAMESCENE_H

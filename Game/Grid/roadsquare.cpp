@@ -1,10 +1,12 @@
+#include <QDateTime>
 #include "roadsquare.h"
 
 RoadSquare::RoadSquare(int posX, int posY, RoadType roadType, RessourceManager *ressourceManager): GridSquare(GridRoad, posX, posY, ROAD_SQUARE_SIZE, ROAD_SQUARE_SIZE, ressourceManager), roadType(roadType)
 {
 	pixmapItem.setPixmap(ressourceManager->getRoadPixmaps()->value(roadType).value(Cross));
 	pixmapItem.setPos(posX-ROAD_SQUARE_MARGIN/2, posY-ROAD_SQUARE_MARGIN/2);
-	pixmapItem.setZValue(10);
+	pixmapItem.setZValue(1);
+	pixmapItem.setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 }
 
 void RoadSquare::updatePixmap(RoadSquare ***roadGrid)

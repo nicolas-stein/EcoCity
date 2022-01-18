@@ -5,10 +5,23 @@ BuildCursor::BuildCursor()
 
 }
 
+BuildCursor::~BuildCursor()
+{
+	if(buildingToBuild!=nullptr){
+		delete buildingToBuild;
+	}
+	if(squareToBuild != nullptr){
+		delete squareToBuild;
+	}
+}
+
 void BuildCursor::setSquareToBuild(GridSquare *newSquareToBuild)
 {
 	squareToBuild = newSquareToBuild;
-	buildingToBuild = nullptr;
+	if(buildingToBuild != nullptr){
+        delete buildingToBuild;
+		buildingToBuild = nullptr;
+	}
 	setPixmap(squareToBuild->getPixmapItem()->pixmap());
 	setZValue(100);
 	if(squareToBuild->getGridType()==GridZone){
@@ -21,8 +34,12 @@ void BuildCursor::setSquareToBuild(GridSquare *newSquareToBuild)
 
 void BuildCursor::setBuildingToBuild(Building *building)
 {
-	squareToBuild = nullptr;
+	if(squareToBuild != nullptr){
+		delete squareToBuild;
+		squareToBuild = nullptr;
+	}
 	buildingToBuild = building;
+	buildingToBuild->updatePixmap(false);
 	setPixmap(building->getPixmapItem()->pixmap());
 	setZValue(100);
 	setOpacity(0.8);
