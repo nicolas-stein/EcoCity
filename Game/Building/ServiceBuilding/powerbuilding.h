@@ -14,6 +14,9 @@ public:
 
 	int getPowerProduction() const;
 
+	double getCost() const;
+	virtual double getOperationalCost() const;
+
 private :
 	PowerType powerType;
 	double powerProduction;

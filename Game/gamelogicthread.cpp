@@ -28,11 +28,17 @@ void GameLogicThread::run()
 {
 	gameDate = QDate::currentDate();
 	emit gameDateChanged(gameDate);
+	emit gameMoneyUpdated(money);
 	connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateGameLogic()));
 	updateTimer->start(1000/GAME_UPS);
 
 	exec();
 	updateTimer->stop();
+}
+
+double GameLogicThread::getMoney() const
+{
+	return money;
 }
 
 void GameLogicThread::addResidents(int residents)
@@ -58,6 +64,26 @@ void GameLogicThread::addResidents(int residents)
 			buildings.removeAt(random);
 		}
 	}
+}
+
+void GameLogicThread::collectMoney()
+{
+	QList<ZoneBuilding*> zoneBuildingList = mapManager.getZoneBuildings();
+	double collectedMoney = 0;
+	for(int i=0;i<zoneBuildingList.size();i++){
+		if(zoneBuildingList.at(i)->getZoneType()==Residential && zoneBuildingList.at(i)->isConnectedToPower()){
+			collectedMoney += ((ResidentialBuilding*)zoneBuildingList.at(i))->getResidents()*100;
+		}
+	}
+
+	QList<ServiceBuilding*> serviceBuildingList = mapManager.getServiceBuildings();
+	for(int i=0;i<serviceBuildingList.size();i++){
+		collectedMoney -= serviceBuildingList.at(i)->getOperationalCost();
+	}
+
+	collectedMoney -= mapManager.getRoadCount()*75;
+
+	changeMoney(collectedMoney);
 }
 
 void GameLogicThread::setGameSpeed(double newGameSpeed)
@@ -130,16 +156,25 @@ void GameLogicThread::updateGameDemands()
 	emit gameDemandsUpdated(residential, totalResidents, commercial, industrial);
 }
 
-void GameLogicThread::updateBuildingsPower()
+void GameLogicThread::updateBuildingsPower(int *notPoweredBuildings, int *notConnectedToRoadBuildings)
 {
+	*notPoweredBuildings = 0;
+	*notConnectedToRoadBuildings = 0;
+
 	QList<ServiceBuilding*> serviceBuildings = mapManager.getServiceBuildings();
 	QList<ZoneBuilding*> zoneBuildings = mapManager.getZoneBuildings();
 
 	double totalElectricalProduction = 0;
 
+	PowerBuilding *currentPowerBuilding;
+
 	for(int i=0;i<serviceBuildings.size();i++){
 		if(serviceBuildings.value(i)->getServiceType()==Power){
-			totalElectricalProduction += ((PowerBuilding*)serviceBuildings.value(i))->getPowerProduction();
+			currentPowerBuilding = (PowerBuilding*)serviceBuildings.value(i);
+			totalElectricalProduction += currentPowerBuilding->getPowerProduction();
+			if(!currentPowerBuilding->isConnectedToRoad()){
+				*notConnectedToRoadBuildings = *notConnectedToRoadBuildings+1;
+			}
 		}
 	}
 	double electricalConsumption = 0;
@@ -151,8 +186,17 @@ void GameLogicThread::updateBuildingsPower()
 		}
 		else{
 			zoneBuildings.value(i)->setConnectedToPower(false);
+			*notPoweredBuildings = *notPoweredBuildings+1;
 		}
 	}
+
+	emit gamePowerUpdated(totalElectricalProduction, electricalConsumption);
+}
+
+void GameLogicThread::changeMoney(double amount)
+{
+	money += amount;
+	emit gameMoneyUpdated(money);
 }
 
 void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
@@ -170,10 +214,6 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 		//QElapsedTimer timer;
 		//timer.start();
 
-		//Game date update
-		gameDate = gameDate.addDays(1);
-		emit gameDateChanged(gameDate);
-
 		//Generating new zone buildings
 		if(QRandomGenerator::global()->generate()%100 > 60){
 			mapManager.generateNewZoneBuilding(Residential);
@@ -187,11 +227,40 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 			mapManager.generateNewZoneBuilding(Industrial);
 		}
 
+		QString statusBarMessage = "";
+
 		//Updating game demands
 		updateGameDemands();
 
 		//Updating buildings power
-		updateBuildingsPower();
+		int notPoweredBuildings, notConnectedToRoadBuildings;
+		updateBuildingsPower(&notPoweredBuildings, &notConnectedToRoadBuildings);
+		if(notConnectedToRoadBuildings > 1){
+			statusBarMessage += "<strong><font color=orange>"+QString::number(notConnectedToRoadBuildings)+" batiments ne sont pas connectés à la route !</font></strong> ";
+		}
+		else if(notConnectedToRoadBuildings > 0){
+			statusBarMessage += "<strong><font color=orange>"+QString::number(notConnectedToRoadBuildings)+" batiment n'est pas connecté à la route !</font></strong> ";
+		}
+
+		if(notPoweredBuildings > 1){
+			statusBarMessage += "<strong><font color=orange>"+QString::number(notPoweredBuildings)+" batiments ne sont pas alimentés en électricité !</font></strong> ";
+		}
+		else if(notPoweredBuildings > 0){
+			statusBarMessage += "<strong><font color=orange>"+QString::number(notPoweredBuildings)+" batiment n'est pas alimenté en électricité !</font></strong> ";
+		}
+
+		emit changeStatusBarMessage(statusBarMessage);
+
+
+		if(gameDate.addDays(1).day() == 1){ //Récolte les impots en début de mois
+			collectMoney();
+		}
+
+		//Game date update
+		gameDate = gameDate.addDays(1);
+		emit gameDateChanged(gameDate);
+
+
 
 		//qDebug() << "Time taken : " << timer.elapsed() << "ms";
 	}

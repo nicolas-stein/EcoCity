@@ -28,18 +28,20 @@ public:
 	TerrainSquare ***getTerrainGrid();
 	ZoneSquare ***getZoneGrid();
 	RoadSquare ***getRoadGrid();
+	int getRoadCount();
 	QList<ZoneBuilding*> getZoneBuildings();
 	QList<ServiceBuilding*> getServiceBuildings();
+	Building *getBuildingFromPos(int posX, int posY);
 
-	GridSquare *requestBuildSquare(GridSquare *square);
-	Building *requestBuildBuilding(Building *building);
+	GridSquare *requestBuildSquare(GridSquare *square, double money);
+	Building *requestBuildBuilding(Building *building, double money);
 	void updateAdjacentRoadPixmaps(int x, int y, int recursive);
 	void updateAdjacentRoadZones(RoadSquare *roadSquare);
 	void requestDestroyRoad(RoadSquare *roadSquare);
 
 	bool generateNewZoneBuilding(ZoneType zoneType);
 	bool putZoneBuilding(int x, int y, int widthGrid, int heightGrid, ZoneType zoneType);
-	bool canPutServiceBuilding(Building *building);
+	bool canPutServiceBuilding(ServiceBuilding *building);
 	bool isThereServiceBuilding(int x, int y);
 	void requestDestroyBuilding(Building *building);
 
@@ -47,6 +49,7 @@ private:
 	TerrainSquare ***terrainGrid;
 	RoadSquare ***roadGrid;
 	ZoneSquare ***zoneGrid;
+	int roadCount = 0;
 
 	QList<ZoneBuilding*> zoneBuildings;
 	QList<ServiceBuilding*> serviceBuildings;

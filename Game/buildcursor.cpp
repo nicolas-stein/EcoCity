@@ -79,7 +79,7 @@ void BuildCursor::setPosition(int x, int y)
 				if(mapManager->getZoneGrid()[x/ZONE_SQUARE_SIZE][y/ZONE_SQUARE_SIZE] != nullptr){
 					setOpacity(1);
 					if(QApplication::mouseButtons() == Qt::LeftButton){
-						emit changeZoneSquareType((ZoneSquare*)squareToBuild);
+						emit changeZoneSquareType((ZoneSquare*)squareToBuild, QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier));
 					}
 				}
 				else{
@@ -93,7 +93,7 @@ void BuildCursor::setPosition(int x, int y)
 		x -= x % ROAD_SQUARE_SIZE;
 		y -= buildingToBuild->getHeight()/2-ROAD_SQUARE_SIZE/2;
 		y -= (y-buildingToBuild->getWidth()/2) % ROAD_SQUARE_SIZE;
-		if(x < 0 || y < 0 || x > scene()->width() || y > scene()->height()){
+		if(x < 0 || y < 0 || x > scene()->width()-buildingToBuild->getWidth() || y > scene()->height()-buildingToBuild->getHeight()){
 			return;
 		}
 
@@ -120,7 +120,7 @@ void BuildCursor::mousePressEvent(QGraphicsSceneMouseEvent *event)
 				return;
 			}
 			else if(squareToBuild->getGridType()==GridZone){
-				emit changeZoneSquareType((ZoneSquare*)squareToBuild);
+				emit changeZoneSquareType((ZoneSquare*)squareToBuild, QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier));
 				event->accept();
 				return;
 			}

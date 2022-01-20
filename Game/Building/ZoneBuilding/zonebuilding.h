@@ -23,7 +23,7 @@ protected:
 	int widthGrid();
 	int heightGrid();
 	unsigned randomPixmapNumber;
-	double powerConsumption;
+	double powerConsumption = 0;
 
 private :
 	QList<ZoneSquare*> coveringZones;

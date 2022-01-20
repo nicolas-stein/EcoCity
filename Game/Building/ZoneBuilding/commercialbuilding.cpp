@@ -5,12 +5,12 @@ CommercialBuilding::CommercialBuilding(int posX, int posY, int width, int height
 	if(widthGrid() == 4 && heightGrid() == 4){
 		maxWorkers = 10;
 		maxClients = 30;
-		powerConsumption = 150e-3;
+		powerConsumption = 300e-3;
 	}
 	else if((widthGrid() == 1 && heightGrid() == 2) || (widthGrid() == 2 && heightGrid() == 1)){
 		maxWorkers = 3;
 		maxClients = 5;
-		powerConsumption = 40e-3;
+		powerConsumption = 80e-3;
 	}
 }
 

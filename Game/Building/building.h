@@ -26,6 +26,8 @@ public:
 
 	virtual void updatePixmap(bool showToolTips) = 0;
 
+	bool isConnectedToPower();
+
 private :
 	int posX;
 	int posY;

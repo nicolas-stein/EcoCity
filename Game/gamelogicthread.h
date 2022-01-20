@@ -23,8 +23,8 @@ public:
 	MapManager *getMapManager();
 
 	void setGameSpeed(double newGameSpeed);
-	void updateGameDemands();
-	void updateBuildingsPower();
+	void changeMoney(double amount);
+	double getMoney() const;
 
 protected:
 	void run();
@@ -38,15 +38,22 @@ private:
 	int tickCounter = 0;
 	QDate gameDate;
 	double gameSpeed = 1;
+	double money = MONEY_START;
 
+	void updateGameDemands();
+	void updateBuildingsPower(int *notPoweredBuildings, int *notConnectedToRoadBuildings);
 	void addResidents(int residents);
+	void collectMoney();
 
 private slots:
 	void updateGameLogic();
 
 signals:
 	void gameDateChanged(QDate newDate);
+	void gameMoneyUpdated(double money);
 	void gameDemandsUpdated(double residential, int residents, double commercial, double industrial);
+	void gamePowerUpdated(double powerProduction, double powerConsumption);
+	void changeStatusBarMessage(QString newMessage);
 };
 
 #endif // GAMELOGICTHREAD_H

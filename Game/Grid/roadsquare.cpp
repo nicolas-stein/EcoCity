@@ -121,3 +121,8 @@ bool RoadSquare::isConnectedRight() const
 {
 	return connectedRight;
 }
+
+double RoadSquare::getCost() const
+{
+	return 1e3;
+}

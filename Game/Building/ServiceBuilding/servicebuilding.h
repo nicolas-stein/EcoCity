@@ -14,6 +14,11 @@ public:
 
 	void updateConnectedToRoad(RoadSquare ***roadGrid);
 
+	bool isConnectedToRoad() const;
+
+	virtual double getCost() const = 0;
+	virtual double getOperationalCost() const = 0;
+
 private:
 	ServiceBuildingType serviceType;
 protected :

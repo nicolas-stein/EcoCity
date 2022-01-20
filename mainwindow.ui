@@ -57,7 +57,7 @@
          <number>4</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>4</number>
         </property>
         <property name="rightMargin">
          <number>4</number>
@@ -65,7 +65,23 @@
         <property name="bottomMargin">
          <number>4</number>
         </property>
-        <item row="0" column="3">
+        <property name="verticalSpacing">
+         <number>6</number>
+        </property>
+        <item row="1" column="0" colspan="2">
+         <widget class="QPushButton" name="pushButton_gameSpeed">
+          <property name="minimumSize">
+           <size>
+            <width>124</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Vitesse : x1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
          <spacer name="horizontalSpacer_3">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -104,19 +120,6 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QPushButton" name="pushButton_gameSpeed">
-          <property name="minimumSize">
-           <size>
-            <width>124</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Vitesse : x1</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QProgressBar" name="progressBar_date">
           <property name="sizePolicy">
@@ -145,16 +148,35 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2" rowspan="3">
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_money">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Argent : 0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" rowspan="4">
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
            <string>Demande</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QProgressBar" name="progressBar_residential">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
+              <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -166,7 +188,7 @@
               </size>
              </property>
              <property name="toolTip">
-              <string>Demande industrielle</string>
+              <string>Demande résidentielle</string>
              </property>
              <property name="styleSheet">
               <string notr="true">QProgressBar::chunk{background-color: #008001;}</string>
@@ -216,7 +238,7 @@
               </size>
              </property>
              <property name="toolTip">
-              <string>Demande résidentielle</string>
+              <string>Demande industrielle</string>
              </property>
              <property name="styleSheet">
               <string notr="true">QProgressBar::chunk{background-color: #FF7F26;}</string>
@@ -233,6 +255,79 @@
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+        <item row="0" column="3" rowspan="4">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Electricité</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_electrical_production">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Production  :</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_electrical_consumption">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Consommation :</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="progressBar_electrical">
+             <property name="minimumSize">
+              <size>
+               <width>154</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QProgressBar::chunk{background-color: #33EEFF}</string>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="textVisible">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="label_money_variation">
+          <property name="text">
+           <string/>
+          </property>
          </widget>
         </item>
        </layout>
@@ -512,12 +607,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar">
-   <property name="styleSheet">
-    <string notr="true">color : red;
-</string>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <customwidgets>
   <customwidget>

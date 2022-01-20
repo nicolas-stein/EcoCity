@@ -7,6 +7,7 @@
 #include "Game/audiomanager.h"
 
 #include <QMainWindow>
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,8 +29,12 @@ private:
 
 	double gameSpeed = 1;
 	int residents = 0;
+	long money = MONEY_START;
 
 	AudioManager audioManager;
+
+	QString statusBarMessage;
+	QLabel statusBarLabel;
 
 private slots:
 	void startGame();
@@ -52,6 +57,9 @@ private slots:
 
 	void gameDateChanged(QDate newDate);
 	void gameDemandsUpdated(double residential, int residents, double commercial, double industrial);
+	void gamePowerUpdated(double powerProduction, double powerConsumption);
+	void gameMoneyUpdated(double money);
+	void changeStatusBarMessage(QString newMessage);
 
 };
 #endif // MAINWINDOW_H

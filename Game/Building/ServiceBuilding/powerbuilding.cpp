@@ -42,3 +42,23 @@ int PowerBuilding::getPowerProduction() const
 
 	return powerProduction;
 }
+
+double PowerBuilding::getCost() const
+{
+	if(powerType == SolarPower){
+		return 25e3;
+	}
+	else{
+		return 100e3;
+	}
+}
+
+double PowerBuilding::getOperationalCost() const
+{
+	if(powerType == SolarPower){
+		return 5e3;
+	}
+	else{
+		return 20e3;
+	}
+}

@@ -21,6 +21,9 @@
 
 #define BUILDING_MARGIN TERRAIN_SQUARE_MARGIN
 
+//Money
+#define MONEY_START 50e3
+
 enum Tooltips {NoRoad, NoPower};
 
 enum GridType {GridTerrain, GridZone, GridBuilding, GridRoad};

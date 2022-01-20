@@ -16,6 +16,8 @@ public:
 	bool isConnectedLeft() const;
 	bool isConnectedRight() const;
 
+	double getCost() const;
+
 private :
 	RoadType roadType;
 

@@ -37,7 +37,7 @@ protected:
 signals:
 	void requestBuildSquare(GridSquare *square);
 	void requestBuildBuilding(Building *building);
-	void changeZoneSquareType(ZoneSquare *zoneSquare);
+	void changeZoneSquareType(ZoneSquare *zoneSquare, bool wholeArea);
 };
 
 #endif // BUILDCURSOR_H

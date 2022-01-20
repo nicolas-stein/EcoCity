@@ -49,13 +49,14 @@ private:
 
 	bool buildingMode = false;
 	bool destroyMode = false;
+	GridType destroyGridType;
 
 private slots:
 	void requestBuildSquare(GridSquare *square);
 	void requestBuildBuilding(Building *building);
 	void zoneSquareCreated(ZoneSquare *zoneSquare);
 	void zoneSquareRemoved(ZoneSquare *zoneSquare);
-	void changeZoneSquareType(ZoneSquare *zoneSquare);
+	void changeZoneSquareType(ZoneSquare *zoneSquare, bool wholeArea);
 	void buildingCreated(Building *building);
 	void buildingRemoved(Building *building);
 	// QGraphicsScene interface
@@ -68,8 +69,11 @@ protected:
 
 signals:
 	void gameDateChanged(QDate newDate);
+	void gameMoneyUpdated(double money);
 	void gameDemandsUpdated(double residential, int residents, double commercial, double industrial);
+	void gamePowerUpdated(double powerProduction, double powerConsumption);
 	void playSoundEffect(SoundEffects soundEffect);
+	void changeStatusBarMessage(QString newMessage);
 };
 
 #endif // MAINGAMESCENE_H

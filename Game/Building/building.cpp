@@ -44,3 +44,8 @@ int Building::getHeight() const
 {
 	return height;
 }
+
+bool Building::isConnectedToPower()
+{
+	return connectedToPower;
+}

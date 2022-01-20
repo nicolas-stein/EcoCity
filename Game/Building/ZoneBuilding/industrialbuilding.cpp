@@ -4,11 +4,11 @@ IndustrialBuilding::IndustrialBuilding(int posX, int posY, int width, int height
 {
 	if(widthGrid() == 4 && heightGrid() == 4){
 		maxWorkers = 20;
-		powerConsumption = 250e-3;
+		powerConsumption = 500e-3;
 	}
 	else if((widthGrid() == 2 && heightGrid() == 3) || (widthGrid() == 3 && heightGrid() == 2)){
 		maxWorkers = 15;
-		powerConsumption = 150e-3;
+		powerConsumption = 250e-3;
 	}
 }
 

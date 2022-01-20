@@ -14,7 +14,7 @@ void ServiceBuilding::updateConnectedToRoad(RoadSquare ***roadGrid)
 {
 	bool previousState = connectedToRoad;
 	for(int x=getPosX()/ROAD_SQUARE_SIZE;x < (getPosX()+width)/ROAD_SQUARE_SIZE;x++){
-		if(roadGrid[x][getPosY()/ROAD_SQUARE_SIZE-1] != nullptr || roadGrid[x][(getPosY()+height)/ROAD_SQUARE_SIZE] != nullptr){
+		if((getPosY()>0 && roadGrid[x][getPosY()/ROAD_SQUARE_SIZE-1] != nullptr) || (getPosY()+height < ROAD_SQUARE_SIZE*ROAD_GRID_SIZE && roadGrid[x][(getPosY()+height)/ROAD_SQUARE_SIZE] != nullptr)){
 			connectedToRoad = true;
 			if(previousState!=connectedToRoad){
 				updatePixmap(true);
@@ -24,7 +24,7 @@ void ServiceBuilding::updateConnectedToRoad(RoadSquare ***roadGrid)
 	}
 
 	for(int y=getPosY()/ROAD_SQUARE_SIZE;y < (getPosY()+height)/ROAD_SQUARE_SIZE;y++){
-		if(roadGrid[getPosX()/ROAD_SQUARE_SIZE-1][y] != nullptr || roadGrid[(getPosX()+width)/ROAD_SQUARE_SIZE][y] != nullptr){
+		if((getPosX()>0 && roadGrid[getPosX()/ROAD_SQUARE_SIZE-1][y] != nullptr) || (getPosX()+width < ROAD_SQUARE_SIZE*ROAD_GRID_SIZE && roadGrid[(getPosX()+width)/ROAD_SQUARE_SIZE][y] != nullptr)){
 			connectedToRoad = true;
 			if(previousState!=connectedToRoad){
 				updatePixmap(true);
@@ -37,4 +37,9 @@ void ServiceBuilding::updateConnectedToRoad(RoadSquare ***roadGrid)
 	if(previousState!=connectedToRoad){
 		updatePixmap(true);
 	}
+}
+
+bool ServiceBuilding::isConnectedToRoad() const
+{
+	return connectedToRoad;
 }

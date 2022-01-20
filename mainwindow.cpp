@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->setupUi(this);
 	ui->tabWidget_main->setVisible(false);
 	ui->statusBar->setVisible(false);
+	ui->statusBar->addPermanentWidget(&statusBarLabel, 1);
+	statusBarLabel.setStyleSheet("font : 12pt;");
 
 	mainMenu_graphicsScene = new MainMenuScene(this);
 	connect(mainMenu_graphicsScene, &MainMenuScene::requestStart, this, &MainWindow::startGame);
@@ -39,8 +41,11 @@ void MainWindow::startGame()
 		ui->tabWidget_construction->setCurrentIndex(0);
 		mainGame_graphicsScene = new MainGameScene(ui->graphicsView);
 		connect(mainGame_graphicsScene, SIGNAL(gameDateChanged(QDate)), this, SLOT(gameDateChanged(QDate)));
+		connect(mainGame_graphicsScene, SIGNAL(gameMoneyUpdated(double)), this, SLOT(gameMoneyUpdated(double)));
 		connect(mainGame_graphicsScene, SIGNAL(gameDemandsUpdated(double,int,double,double)), this, SLOT(gameDemandsUpdated(double,int,double,double)));
+		connect(mainGame_graphicsScene, SIGNAL(gamePowerUpdated(double,double)), this, SLOT(gamePowerUpdated(double,double)));
 		connect(mainGame_graphicsScene, SIGNAL(playSoundEffect(SoundEffects)), &audioManager, SLOT(playSoundEffect(SoundEffects)));
+		connect(mainGame_graphicsScene, SIGNAL(changeStatusBarMessage(QString)), this, SLOT(changeStatusBarMessage(QString)));
 
 		ui->graphicsView->setScene(mainGame_graphicsScene);
 		ui->graphicsView->setPanEnable(true);
@@ -288,7 +293,7 @@ void MainWindow::on_tabWidget_construction_currentChanged(int index)
 void MainWindow::on_tabWidget_main_currentChanged(int index)
 {
 	if(index == 0){
-		ui->statusBar->clearMessage();
+		changeStatusBarMessage(statusBarMessage);
 		mainGame_graphicsScene->setGameSpeed(gameSpeed);
 		if(ui->button_place_road_1->isChecked()){
 			ui->button_place_road_1->setChecked(false);
@@ -323,20 +328,33 @@ void MainWindow::on_tabWidget_main_currentChanged(int index)
 			ui->button_remove_zone->setChecked(false);
 			on_button_remove_zone_clicked(false);
 		}
+
+		if(ui->button_place_power_1->isChecked()){
+			ui->button_place_power_1->setChecked(false);
+			on_button_place_power_1_clicked(false);
+		}
+		if(ui->button_place_power_2->isChecked()){
+			ui->button_place_power_2->setChecked(false);
+			on_button_place_power_2_clicked(false);
+		}
+		if(ui->button_remove_power->isChecked()){
+			ui->button_remove_power->setChecked(false);
+			on_button_remove_power_clicked(false);
+		}
+
 		if(mainGame_graphicsScene!=nullptr){
 			mainGame_graphicsScene->showZones(false);
 		}
 	}
 	else if(index == 1){
-		ui->statusBar->showMessage("Mode construction : jeu en pause");
-		ui->statusBar->setStyleSheet("font-weight: bold; color: red");
+		changeStatusBarMessage("<strong><font color=red>Mode construction : jeu en pause</font></strong>");
 		mainGame_graphicsScene->setGameSpeed(0);
 		if(mainGame_graphicsScene!=nullptr){
 			mainGame_graphicsScene->showZones(ui->tabWidget_construction->currentIndex()==1);
 		}
 	}
 	else if(index == 2){
-		ui->statusBar->clearMessage();
+		changeStatusBarMessage(statusBarMessage);
 		mainGame_graphicsScene->setGameSpeed(gameSpeed);
 		if(ui->button_place_power_1->isChecked()){
 			ui->button_place_power_1->setChecked(false);
@@ -386,6 +404,85 @@ void MainWindow::gameDemandsUpdated(double residential, int residents, double co
 	ui->label_population_variation->setPalette(palette);
 	this->residents = residents;
 	ui->label_population->setText("Population : "+QString::number(residents));
+}
+
+void MainWindow::gamePowerUpdated(double powerProduction, double powerConsumption)
+{
+	ui->label_electrical_production->setText("Production : "+QString::number(powerProduction, 'f', 2)+" MW");
+	ui->label_electrical_consumption->setText("Consommation : "+QString::number(powerConsumption, 'f', 2)+" MW");
+	if(powerProduction == 0){
+		powerProduction = 1;
+	}
+	ui->progressBar_electrical->setMaximum(powerProduction);
+	ui->progressBar_electrical->setValue(powerConsumption);
+}
+
+void MainWindow::gameMoneyUpdated(double money)
+{
+	int divider;
+	QString suffix;
+	if(abs(money) >= 1e9){
+		divider = 1e9;
+		suffix = " Md€";
+	}
+	else if(abs(money) >= 1e6){
+		divider = 1e6;
+		suffix = " M€";
+	}
+	else if(abs(money) >= 1e3){
+		divider = 1e3;
+		suffix = " k€";
+	}
+	else{
+		divider = 1;
+		suffix = " €";
+	}
+
+	int variationDivider;
+	QString variationSuffix;
+	if(abs(money - this->money) >= 1e9){
+		variationDivider = 1e9;
+		variationSuffix = " Md€";
+	}
+	else if(abs(money - this->money) >= 1e6){
+		variationDivider = 1e6;
+		variationSuffix = " M€";
+	}
+	else if(abs(money - this->money) >= 1e3){
+		variationDivider = 1e3;
+		variationSuffix = " k€";
+	}
+	else{
+		variationDivider = 1;
+		variationSuffix = " €";
+	}
+
+	QPalette palette = ui->label_money_variation->palette();
+	if(money-this->money > 0){ //Money has increased
+		ui->label_money_variation->setText("+"+QString::number((money - this->money)/variationDivider)+variationSuffix);
+		palette.setColor(ui->label_money_variation->foregroundRole(), Qt::green);
+
+	}
+	else if(money-this->money == 0){
+		ui->label_money_variation->setText("");
+	}
+	else{ //Money has decreased
+		ui->label_money_variation->setText("-"+QString::number((this->money - money)/variationDivider)+variationSuffix);
+		palette.setColor(ui->label_money_variation->foregroundRole(), Qt::red);
+	}
+
+	ui->label_money_variation->setPalette(palette);
+	this->money = money;
+	ui->label_money->setText("Argent : "+QString::number(money/divider, 'f', 2)+suffix);
+}
+
+void MainWindow::changeStatusBarMessage(QString newMessage)
+{
+	if(ui->tabWidget_main->currentIndex() != 1){
+		statusBarMessage = newMessage;
+	}
+
+	statusBarLabel.setText(newMessage);
 }
 
 void MainWindow::on_pushButton_gameSpeed_clicked()
