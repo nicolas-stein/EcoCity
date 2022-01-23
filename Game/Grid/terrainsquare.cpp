@@ -1,32 +1,32 @@
 #include "terrainsquare.h"
 
-TerrainSquare::TerrainSquare(double noise, int posX, int posY, RessourceManager *ressourceManager) : GridSquare(GridTerrain, posX, posY, TERRAIN_SQUARE_SIZE, TERRAIN_SQUARE_SIZE, ressourceManager)
+TerrainSquare::TerrainSquare(double noise, int posX, int posY, RessourceManager *ressourceManager) : GridSquare(Grid::Type::GridTerrain, posX, posY, TERRAIN_SQUARE_SIZE, TERRAIN_SQUARE_SIZE, ressourceManager)
 {
 	if(noise < 0.25){
-		terrainType = Water;
-		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Water));
+		terrainType = Grid::Terrain::Type::Water;
+		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Grid::Terrain::Type::Water));
 	}
 	else if(noise < 0.30){
-		terrainType = Sand;
-		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Sand));
+		terrainType = Grid::Terrain::Type::Sand;
+		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Grid::Terrain::Type::Sand));
 	}
 	else if(noise < 0.77){
-		terrainType = Grass;
-		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Grass));
+		terrainType = Grid::Terrain::Type::Grass;
+		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Grid::Terrain::Type::Grass));
 	}
 	else if(noise < 0.80){
-		terrainType = Rock;
-		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Rock));
+		terrainType = Grid::Terrain::Type::Rock;
+		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Grid::Terrain::Type::Rock));
 	}
 	else{
-		terrainType = Mountain;
-		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Mountain));
+		terrainType = Grid::Terrain::Type::Mountain;
+		pixmapItem.setPixmap(ressourceManager->getTerrainPixmaps()->value(Grid::Terrain::Type::Mountain));
 	}
 	pixmapItem.setPos(posX-TERRAIN_SQUARE_MARGIN/2, posY-TERRAIN_SQUARE_MARGIN/2);
 	pixmapItem.setZValue(0);
 }
 
-TerrainType TerrainSquare::getTerrainType() const
+Grid::Terrain::Type TerrainSquare::getTerrainType() const
 {
 	return terrainType;
 }

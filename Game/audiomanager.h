@@ -17,10 +17,12 @@ class AudioManager : public QThread
 {
 	Q_OBJECT
 public:
-	AudioManager();
+	AudioManager(QObject *parent = nullptr);
 	~AudioManager();
 
 	void startMusic();
+	void changeSoundEffectVolume(int volume);
+	void changeMusicVolume(int volume);
 
 public slots:
 	void playSoundEffect(SoundEffects soundEffect);

@@ -7,19 +7,23 @@
 class PowerBuilding : public ServiceBuilding
 {
 public:
-	PowerBuilding(int posX, int posY, RessourceManager *ressourceManager, PowerType powerType);
+	PowerBuilding(int posX, int posY, RessourceManager *ressourceManager, Buildings::Service::PowerType powerType);
 
-	PowerType getPowerType() const;
+	Buildings::Service::PowerType getPowerType() const;
 	void updatePixmap(bool showToolTips);
 
-	int getPowerProduction() const;
+	double getPollution() const;
 
 	double getCost() const;
-	virtual double getOperationalCost() const;
+	double getOperationalCost() const;
+
+	double getBasePowerProduction() const;
+	double getCurrentPowerProduction();
 
 private :
-	PowerType powerType;
-	double powerProduction;
+	Buildings::Service::PowerType powerType;
+	double basePowerProduction;
+	double currentPowerProduction = 0;
 };
 
 #endif // POWERBUILDING_H

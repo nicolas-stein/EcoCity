@@ -1,7 +1,8 @@
 #include "audiomanager.h"
 
-AudioManager::AudioManager()
+AudioManager::AudioManager(QObject *parent): QThread {parent}
 {
+	moveToThread(this);
 	musicPlayer = new QMediaPlayer();
 	musicPlayer->moveToThread(this);
 	audioOutput = new QAudioOutput();
@@ -18,8 +19,9 @@ AudioManager::AudioManager()
 
 AudioManager::~AudioManager()
 {
-	delete soundEffects.value(RoadPlacement);
-	delete soundEffects.value(ZonePlacement);
+	foreach(QSoundEffect *soundEffect, soundEffects){
+		delete soundEffect;
+	}
 	musicPlayer->stop();
 	delete musicPlayer;
 	delete audioOutput;
@@ -41,6 +43,19 @@ void AudioManager::playSoundEffect(SoundEffects soundEffect)
 	}
 }
 
+void AudioManager::changeSoundEffectVolume(int volume)
+{
+	double vol = (double) volume /100;
+	foreach(QSoundEffect *soundEffect, soundEffects){
+		soundEffect->setVolume(vol);
+	}
+}
+
+void AudioManager::changeMusicVolume(int volume)
+{
+	audioOutput->setVolume((double)volume/100);
+}
+
 void AudioManager::loadMusics()
 {
 	for(int i=1;i<=4;i++){
@@ -51,14 +66,29 @@ void AudioManager::loadMusics()
 void AudioManager::loadSoundEffects()
 {
 	QSoundEffect *soundEffect = new QSoundEffect();
-	soundEffect->moveToThread(this);soundEffect->setLoopCount(1); soundEffect->setVolume(0.5);
+	soundEffect->moveToThread(this);soundEffect->setLoopCount(1);
 	soundEffect->setSource(QUrl("qrc:/sounds/sound_effect/placeRoad"));
 	soundEffects.insert(RoadPlacement, soundEffect);
 
 	soundEffect = new QSoundEffect();
-	soundEffect->moveToThread(this); soundEffect->setLoopCount(1); soundEffect->setVolume(0.5);
+	soundEffect->moveToThread(this); soundEffect->setLoopCount(1);
 	soundEffect->setSource(QUrl("qrc:/sounds/sound_effect/placeZone"));
 	soundEffects.insert(ZonePlacement, soundEffect);
+
+	soundEffect = new QSoundEffect();
+	soundEffect->moveToThread(this); soundEffect->setLoopCount(1);
+	soundEffect->setSource(QUrl("qrc:/sounds/sound_effect/placeBuilding"));
+	soundEffects.insert(BuildingPlacement, soundEffect);
+
+	soundEffect = new QSoundEffect();
+	soundEffect->moveToThread(this); soundEffect->setLoopCount(1);
+	soundEffect->setSource(QUrl("qrc:/sounds/sound_effect/destroyLong"));
+	soundEffects.insert(DestroyLong, soundEffect);
+
+	soundEffect = new QSoundEffect();
+	soundEffect->moveToThread(this); soundEffect->setLoopCount(1);
+	soundEffect->setSource(QUrl("qrc:/sounds/sound_effect/destroyShort"));
+	soundEffects.insert(DestroyShort, soundEffect);
 }
 
 void AudioManager::musicStatusChanged(QMediaPlayer::MediaStatus status)

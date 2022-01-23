@@ -12,6 +12,8 @@ public:
 
 	int getMaxWorkers() const;
 
+	double getPollution() const;
+
 private:
 	int maxWorkers;
 };

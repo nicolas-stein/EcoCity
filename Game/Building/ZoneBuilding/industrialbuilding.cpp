@@ -1,6 +1,6 @@
 #include "industrialbuilding.h"
 
-IndustrialBuilding::IndustrialBuilding(int posX, int posY, int width, int height, RessourceManager *ressourceManager): ZoneBuilding(posX, posY, width, height, Industrial, ressourceManager)
+IndustrialBuilding::IndustrialBuilding(int posX, int posY, int width, int height, RessourceManager *ressourceManager): ZoneBuilding(posX, posY, width, height, Grid::Zone::Type::Industrial, ressourceManager)
 {
 	if(widthGrid() == 4 && heightGrid() == 4){
 		maxWorkers = 20;
@@ -15,4 +15,9 @@ IndustrialBuilding::IndustrialBuilding(int posX, int posY, int width, int height
 int IndustrialBuilding::getMaxWorkers() const
 {
 	return maxWorkers;
+}
+
+double IndustrialBuilding::getPollution() const
+{
+	return maxWorkers * 3;
 }

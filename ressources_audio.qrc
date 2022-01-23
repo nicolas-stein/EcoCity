@@ -8,5 +8,8 @@
     <qresource prefix="/sounds/sound_effect">
         <file alias="placeRoad">Files/Sounds/Sound_effect/PlaceRoad.wav</file>
         <file alias="placeZone">Files/Sounds/Sound_effect/PlaceZone.wav</file>
+	<file alias="placeBuilding">Files/Sounds/Sound_effect/PlaceBuilding.wav</file>
+        <file alias="destroyLong">Files/Sounds/Sound_effect/DestroyLong.wav</file>
+        <file alias="destroyShort">Files/Sounds/Sound_effect/DestroyShort.wav</file>
     </qresource>
 </RCC>

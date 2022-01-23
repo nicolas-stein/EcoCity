@@ -8,6 +8,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include <QSettings>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,13 +30,17 @@ private:
 
 	double gameSpeed = 1;
 	int residents = 0;
-	long money = MONEY_START;
+	double money = 150e3;
 
 	AudioManager audioManager;
+	QThread audioManagerThread;
 
 	QString statusBarMessage;
 	QLabel statusBarLabel;
 
+	QSettings *settings;
+
+	void set_all_power_buttons_enabled(bool enabled);
 private slots:
 	void startGame();
 	void quitApp();
@@ -52,13 +57,22 @@ private slots:
 
 	void on_button_place_power_1_clicked(bool checked);
 	void on_button_place_power_2_clicked(bool checked);
+	void on_button_place_power_3_clicked(bool checked);
+	void on_button_place_power_4_clicked(bool checked);
+	void on_button_place_power_5_clicked(bool checked);
+	void on_button_place_power_6_clicked(bool checked);
+	void on_button_place_power_7_clicked(bool checked);
 	void on_button_remove_power_clicked(bool checked);
 	void on_pushButton_gameSpeed_clicked();
+
+	void changeSoundEffectVolume(int volume);
+	void changeMusicVolume(int volume);
 
 	void gameDateChanged(QDate newDate);
 	void gameDemandsUpdated(double residential, int residents, double commercial, double industrial);
 	void gamePowerUpdated(double powerProduction, double powerConsumption);
 	void gameMoneyUpdated(double money);
+	void gamePollutionUpdated(int pollution, int maxPollution);
 	void changeStatusBarMessage(QString newMessage);
 
 };

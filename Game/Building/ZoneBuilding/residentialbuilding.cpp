@@ -1,9 +1,10 @@
 #include "residentialbuilding.h"
 
-ResidentialBuilding::ResidentialBuilding(int posX, int posY, int width, int height, RessourceManager *ressourceManager): ZoneBuilding(posX, posY, width, height, Residential, ressourceManager)
+ResidentialBuilding::ResidentialBuilding(int posX, int posY, int width, int height, RessourceManager *ressourceManager): ZoneBuilding(posX, posY, width, height, Grid::Zone::Type::Residential, ressourceManager)
 {
 	residents = 0;
-	if(widthGrid() == 4 && heightGrid() == 8){
+	if((widthGrid() == 4 && heightGrid() == 8) ||
+			(widthGrid() == 8 && heightGrid() == 4)){
 		maxResidents = 70;
 	}
 	else if(widthGrid() == 4 && heightGrid() == 4){
@@ -30,4 +31,9 @@ void ResidentialBuilding::addResidents(int newResidents)
 		residents += newResidents;
 	}
 	powerConsumption = residents*20/1000;
+}
+
+double ResidentialBuilding::getPollution() const
+{
+	return residents *2;
 }

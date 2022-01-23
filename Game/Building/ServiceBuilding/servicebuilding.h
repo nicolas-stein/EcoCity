@@ -8,9 +8,9 @@
 class ServiceBuilding : public Building
 {
 public:
-	ServiceBuilding(int posX, int posY, ServiceBuildingType serviceType, RessourceManager *ressourceManager);
+	ServiceBuilding(int posX, int posY, Buildings::Service::Type serviceType, RessourceManager *ressourceManager);
 
-	ServiceBuildingType getServiceType() const;
+	Buildings::Service::Type getServiceType() const;
 
 	void updateConnectedToRoad(RoadSquare ***roadGrid);
 
@@ -20,7 +20,7 @@ public:
 	virtual double getOperationalCost() const = 0;
 
 private:
-	ServiceBuildingType serviceType;
+	Buildings::Service::Type serviceType;
 protected :
 	int cost = 0;
 	bool connectedToRoad = false;

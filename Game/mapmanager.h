@@ -39,8 +39,8 @@ public:
 	void updateAdjacentRoadZones(RoadSquare *roadSquare);
 	void requestDestroyRoad(RoadSquare *roadSquare);
 
-	bool generateNewZoneBuilding(ZoneType zoneType);
-	bool putZoneBuilding(int x, int y, int widthGrid, int heightGrid, ZoneType zoneType);
+	bool generateNewZoneBuilding(Grid::Zone::Type zoneType);
+	bool putZoneBuilding(int x, int y, int widthGrid, int heightGrid, Grid::Zone::Type zoneType);
 	bool canPutServiceBuilding(ServiceBuilding *building);
 	bool isThereServiceBuilding(int x, int y);
 	void requestDestroyBuilding(Building *building);

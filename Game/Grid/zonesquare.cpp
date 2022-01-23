@@ -1,6 +1,6 @@
 #include "zonesquare.h"
 
-ZoneSquare::ZoneSquare(int posX, int posY, ZoneType zoneType, RessourceManager *ressourceManager) : GridSquare(GridZone, posX, posY, ZONE_SQUARE_SIZE, ZONE_SQUARE_SIZE, ressourceManager), zoneType(zoneType)
+ZoneSquare::ZoneSquare(int posX, int posY, Grid::Zone::Type zoneType, RessourceManager *ressourceManager) : GridSquare(Grid::Type::GridZone, posX, posY, ZONE_SQUARE_SIZE, ZONE_SQUARE_SIZE, ressourceManager), zoneType(zoneType)
 {
 	pixmapItem.setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 	pixmapItem.setPixmap(ressourceManager->getZonePixmaps()->value(zoneType));
@@ -10,13 +10,13 @@ ZoneSquare::ZoneSquare(int posX, int posY, ZoneType zoneType, RessourceManager *
 	pixmapItem.setVisible(false);
 }
 
-void ZoneSquare::setZoneType(ZoneType zoneType)
+void ZoneSquare::setZoneType(Grid::Zone::Type zoneType)
 {
 	this->zoneType = zoneType;
 	pixmapItem.setPixmap(ressourceManager->getZonePixmaps()->value(zoneType));
 }
 
-ZoneType ZoneSquare::getZoneType() const
+Grid::Zone::Type ZoneSquare::getZoneType() const
 {
 	return zoneType;
 }

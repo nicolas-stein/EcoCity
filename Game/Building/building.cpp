@@ -1,18 +1,18 @@
 #include "building.h"
 
-Building::Building(int posX, int posY, int width, int height, BuildingType buildingType, RessourceManager *ressourceManager): posX(posX), posY(posY), buildingType(buildingType), ressourceManager(ressourceManager), width(width), height(height)
+Building::Building(int posX, int posY, int width, int height, Buildings::Type buildingType, RessourceManager *ressourceManager): posX(posX), posY(posY), buildingType(buildingType), ressourceManager(ressourceManager), width(width), height(height)
 {
 	pixmapItem.setPos(posX-BUILDING_MARGIN/2, posY-BUILDING_MARGIN/2);
 	pixmapItem.setZValue(10);
 	pixmapItem.setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 }
 
-QGraphicsPixmapItem *Building::getPixmapItem()
+CustomGraphicsPixmapItem *Building::getPixmapItem()
 {
 	return &pixmapItem;
 }
 
-BuildingType Building::getBuildingType() const
+Buildings::Type Building::getBuildingType() const
 {
 	return buildingType;
 }
@@ -21,7 +21,7 @@ void Building::setPos(int newPosX, int newPosY)
 {
 	posX = newPosX;
 	posY = newPosY;
-	pixmapItem.setPos(newPosX, newPosY);
+	pixmapItem.setPos(posX-BUILDING_MARGIN/2, posY-BUILDING_MARGIN/2);
 }
 
 int Building::getPosX() const

@@ -3,27 +3,27 @@
 
 #include "constants.h"
 #include "Game/ressourcemanager.h"
-
-#include <QGraphicsPixmapItem>
+#include "customgraphicspixmapitem.h"
 
 class GridSquare
 {
 
 public:
-	GridSquare(GridType gridType, int posX, int posY, int width, int height, RessourceManager *ressourceManager);
+	GridSquare(Grid::Type gridType, int posX, int posY, int width, int height, RessourceManager *ressourceManager);
+	virtual ~GridSquare(){};
 
-	QGraphicsPixmapItem *getPixmapItem();
+	CustomGraphicsPixmapItem *getPixmapItem();
 	void setPos(int posX, int newPosY);
 
-	GridType getGridType() const;
+	Grid::Type getGridType() const;
 
 	int getPosX() const;
 	int getPosY() const;
 
 private:
-	GridType gridType;
+	Grid::Type gridType;
 protected :
-	QGraphicsPixmapItem pixmapItem;
+	CustomGraphicsPixmapItem pixmapItem;
 	int posX, posY, width, height;
 	RessourceManager *ressourceManager;
 };

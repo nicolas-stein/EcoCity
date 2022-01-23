@@ -6,10 +6,11 @@
 class RoadSquare : public GridSquare
 {
 public:
-	RoadSquare(int posX, int posY, RoadType roadType, RessourceManager *ressourceManager);
+	RoadSquare(int posX, int posY, Grid::Road::Type roadType, RessourceManager *ressourceManager);
+
 	void updatePixmap(RoadSquare ***roadGrid);
 
-	RoadType getRoadType() const;
+	Grid::Road::Type getRoadType() const;
 
 	bool isConnectedBottom() const;
 	bool isConnectedTop() const;
@@ -19,7 +20,7 @@ public:
 	double getCost() const;
 
 private :
-	RoadType roadType;
+	Grid::Road::Type roadType;
 
 	bool connectedTop = false;
 	bool connectedBottom = false;

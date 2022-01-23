@@ -16,7 +16,7 @@ class GameLogicThread : public QThread
 {
 	Q_OBJECT
 public:
-	GameLogicThread();
+	GameLogicThread(QObject *parent = nullptr);
 	~GameLogicThread();
 
 	RessourceManager *getRessourceManager();
@@ -38,12 +38,18 @@ private:
 	int tickCounter = 0;
 	QDate gameDate;
 	double gameSpeed = 1;
-	double money = MONEY_START;
+	double money = 250e3;
+
+	int totalResidents = 0;
+	int totalResidentialCapacity = 0;
+	int totalWorkCapacity = 0;
+	int totalCommercialCapacity = 0;
 
 	void updateGameDemands();
 	void updateBuildingsPower(int *notPoweredBuildings, int *notConnectedToRoadBuildings);
+	void updateGamePollution();
 	void addResidents(int residents);
-	void collectMoney();
+	void collectMoney(int daysInMonth);
 
 private slots:
 	void updateGameLogic();
@@ -53,6 +59,7 @@ signals:
 	void gameMoneyUpdated(double money);
 	void gameDemandsUpdated(double residential, int residents, double commercial, double industrial);
 	void gamePowerUpdated(double powerProduction, double powerConsumption);
+	void gamePollutionUpdated(int pollution, int maxPollution);
 	void changeStatusBarMessage(QString newMessage);
 };
 

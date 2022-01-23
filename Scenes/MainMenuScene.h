@@ -15,11 +15,14 @@ class MainMenuScene : public QGraphicsScene
 	Q_OBJECT
 public:
 	explicit MainMenuScene(QObject *parent = nullptr);
+	~MainMenuScene();
 
+	void setSlidersValue(int valueMusicSlider, int valueSoundSlider);
 private:
 	QGraphicsPixmapItem titlePixmap;
 	QPushButton startButton;
 	QPushButton quitButton;
+	QGraphicsPixmapItem musicLogo, soundLogo;
 	QSlider musicSlider;
 	QSlider soundSlider;
 
@@ -34,6 +37,9 @@ private:
 signals :
 	void requestStart();
 	void requestQuit();
+
+	void changeSoundEffectVolume(int volume);
+	void changeMusicVolume(int volume);
 
 	// QGraphicsScene interface
 protected:

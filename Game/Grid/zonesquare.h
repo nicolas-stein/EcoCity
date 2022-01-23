@@ -9,9 +9,9 @@ class RoadSquare;
 class ZoneSquare : public GridSquare
 {
 public:
-	ZoneSquare(int posX, int posY, ZoneType zoneType, RessourceManager *ressourceManager);
-	void setZoneType(ZoneType zoneType);
-	ZoneType getZoneType() const;
+	ZoneSquare(int posX, int posY, Grid::Zone::Type zoneType, RessourceManager *ressourceManager);
+	void setZoneType(Grid::Zone::Type zoneType);
+	Grid::Zone::Type getZoneType() const;
 
 	int isZoneAdjacentToRoad(RoadSquare ***roadGrid);
 	bool isZoneValid(ZoneSquare ***zoneGrid, RoadSquare ***roadGrid);
@@ -20,7 +20,7 @@ public:
 	void setBuilding(ZoneBuilding *newBuilding);
 
 private:
-	ZoneType zoneType;
+	Grid::Zone::Type zoneType;
 	ZoneBuilding *building = nullptr;
 };
 

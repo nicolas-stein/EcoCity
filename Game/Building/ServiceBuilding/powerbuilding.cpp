@@ -1,21 +1,50 @@
 #include "powerbuilding.h"
 
-PowerBuilding::PowerBuilding(int posX, int posY, RessourceManager *ressourceManager, PowerType powerType): ServiceBuilding(posX, posY, Power, ressourceManager), powerType(powerType)
+PowerBuilding::PowerBuilding(int posX, int posY, RessourceManager *ressourceManager, Buildings::Service::PowerType powerType): ServiceBuilding(posX, posY, Buildings::Service::Type::Power, ressourceManager), powerType(powerType)
 {
-	if(powerType == SolarPower){
+	switch(powerType){
+	case Buildings::Service::Coal:
+		width = ZONE_SQUARE_SIZE*12;
+		height = ZONE_SQUARE_SIZE*8;
+		basePowerProduction = 15;
+		break;
+	case Buildings::Service::Gas:
 		width = ZONE_SQUARE_SIZE*8;
 		height = ZONE_SQUARE_SIZE*8;
-		powerProduction = 20;
-	}
-	else if(powerType == NuclearPower){
+		basePowerProduction = 40;
+		break;
+	case Buildings::Service::Oil:
+		width = ZONE_SQUARE_SIZE*24;
+		height = ZONE_SQUARE_SIZE*8;
+		basePowerProduction = 60;
+		break;
+	case Buildings::Service::Wind:
+		width = ZONE_SQUARE_SIZE*4;
+		height = ZONE_SQUARE_SIZE*4;
+		basePowerProduction = 10;
+		break;
+	case Buildings::Service::SmallSolar:
+		width = ZONE_SQUARE_SIZE*2;
+		height = ZONE_SQUARE_SIZE*4;
+		basePowerProduction = 5;
+		break;
+	case Buildings::Service::BigSolar:
 		width = ZONE_SQUARE_SIZE*8;
 		height = ZONE_SQUARE_SIZE*8;
-		powerProduction = 100;
+		basePowerProduction = 20;
+		break;
+	case Buildings::Service::Nuclear:
+		width = ZONE_SQUARE_SIZE*8;
+		height = ZONE_SQUARE_SIZE*8;
+		basePowerProduction = 250;
+		break;
+
 	}
+
 	connectedToPower = true;
 }
 
-PowerType PowerBuilding::getPowerType() const
+Buildings::Service::PowerType PowerBuilding::getPowerType() const
 {
 	return powerType;
 }
@@ -34,31 +63,119 @@ void PowerBuilding::updatePixmap(bool showToolTips)
 	}
 }
 
-int PowerBuilding::getPowerProduction() const
+double PowerBuilding::getPollution() const
 {
 	if(!connectedToRoad){
 		return 0;
 	}
 
-	return powerProduction;
+	switch(powerType){
+	case Buildings::Service::Coal:
+		return 8200;
+		break;
+	case Buildings::Service::Gas:
+		return 4900;
+		break;
+	case Buildings::Service::Oil:
+		return 7200;
+		break;
+	case Buildings::Service::Wind:
+		return 40;
+		break;
+	case Buildings::Service::SmallSolar:
+		return 20;
+		break;
+	case Buildings::Service::BigSolar:
+		return 50;
+		break;
+	case Buildings::Service::Nuclear:
+		return 30;
+		break;
+	}
+	return 0;
+}
+
+double PowerBuilding::getCurrentPowerProduction()
+{
+	if(!connectedToRoad){
+		return 0;
+	}
+	else if(currentPowerProduction == 0){
+		currentPowerProduction = basePowerProduction;
+	}
+	else if(powerType == Buildings::Service::SmallSolar || powerType == Buildings::Service::BigSolar || powerType == Buildings::Service::Wind){
+		currentPowerProduction = currentPowerProduction + basePowerProduction * ((double)(QRandomGenerator::global()->generate() % 5) - 2) / 100;
+		if(currentPowerProduction > basePowerProduction){
+			currentPowerProduction = basePowerProduction;
+		}
+		else if(currentPowerProduction < basePowerProduction*0.75){
+			currentPowerProduction = basePowerProduction*0.75;
+		}
+	}
+
+	return currentPowerProduction;
 }
 
 double PowerBuilding::getCost() const
 {
-	if(powerType == SolarPower){
-		return 25e3;
-	}
-	else{
+	switch(powerType){
+	case Buildings::Service::Coal:
 		return 100e3;
+		break;
+	case Buildings::Service::Gas:
+		return 300e3;
+		break;
+	case Buildings::Service::Oil:
+		return 500e3;
+		break;
+	case Buildings::Service::Wind:
+		return 400e3;
+		break;
+	case Buildings::Service::SmallSolar:
+		return 250e3;
+		break;
+	case Buildings::Service::BigSolar:
+		return 750e3;
+		break;
+	case Buildings::Service::Nuclear:
+		return 2.5e6;
+		break;
+
 	}
+
+	return 0;
 }
 
 double PowerBuilding::getOperationalCost() const
 {
-	if(powerType == SolarPower){
+	switch(powerType){
+	case Buildings::Service::Coal:
+		return 4e3;
+		break;
+	case Buildings::Service::Gas:
+		return 12.5e3;
+		break;
+	case Buildings::Service::Oil:
+		return 30e3;
+		break;
+	case Buildings::Service::Wind:
 		return 5e3;
+		break;
+	case Buildings::Service::SmallSolar:
+		return 2e3;
+		break;
+	case Buildings::Service::BigSolar:
+		return 5e3;
+		break;
+	case Buildings::Service::Nuclear:
+		return 200e3;
+		break;
 	}
-	else{
-		return 20e3;
-	}
+
+	return 0;
+}
+
+double PowerBuilding::getBasePowerProduction() const
+{
+	return basePowerProduction;
 }

@@ -1,6 +1,7 @@
 #include "zonebuilding.h"
+#include <QThread>
 
-ZoneBuilding::ZoneBuilding(int posX, int posY, int width, int height, ZoneType zoneType, RessourceManager *ressourceManager): Building(posX, posY, width, height, BuildingZone, ressourceManager), zoneType(zoneType)
+ZoneBuilding::ZoneBuilding(int posX, int posY, int width, int height, Grid::Zone::Type zoneType, RessourceManager *ressourceManager): Building(posX, posY, width, height, Buildings::Type::BuildingZone, ressourceManager), zoneType(zoneType)
 {
 	randomPixmapNumber = QRandomGenerator::global()->generate();
 }
@@ -15,7 +16,7 @@ const QList<ZoneSquare *> &ZoneBuilding::getCoveringZones() const
 	return coveringZones;
 }
 
-ZoneType ZoneBuilding::getZoneType() const
+Grid::Zone::Type ZoneBuilding::getZoneType() const
 {
 	return zoneType;
 }

@@ -89,14 +89,14 @@ void MapManager::initMap(RessourceManager *ressourceManager)
 
 GridSquare* MapManager::requestBuildSquare(GridSquare *square, double money)
 {
-	if(square->getGridType()==GridRoad){
+	if(square->getGridType()==Grid::Type::GridRoad){
 		RoadSquare *roadSquare = (RoadSquare*)square;
 		if(money < roadSquare->getCost()){
 			return nullptr;
 		}
 
 		if(roadGrid[roadSquare->getPosX()/ROAD_SQUARE_SIZE][roadSquare->getPosY()/ROAD_SQUARE_SIZE] == nullptr && !isThereServiceBuilding(roadSquare->getPosX(), roadSquare->getPosY())){
-			if(terrainGrid[roadSquare->getPosX()/TERRAIN_SQUARE_SIZE][roadSquare->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Grass || terrainGrid[roadSquare->getPosX()/TERRAIN_SQUARE_SIZE][roadSquare->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Sand ||terrainGrid[roadSquare->getPosX()/TERRAIN_SQUARE_SIZE][roadSquare->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Rock){
+			if(terrainGrid[roadSquare->getPosX()/TERRAIN_SQUARE_SIZE][roadSquare->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Grid::Terrain::Type::Grass || terrainGrid[roadSquare->getPosX()/TERRAIN_SQUARE_SIZE][roadSquare->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Grid::Terrain::Type::Sand ||terrainGrid[roadSquare->getPosX()/TERRAIN_SQUARE_SIZE][roadSquare->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Grid::Terrain::Type::Rock){
 
 				RoadSquare *newSquare = new RoadSquare(roadSquare->getPosX(), roadSquare->getPosY(), roadSquare->getRoadType(), ressourceManager);
 				int x = newSquare->getPosX()/ROAD_SQUARE_SIZE;
@@ -132,24 +132,25 @@ GridSquare* MapManager::requestBuildSquare(GridSquare *square, double money)
 
 Building *MapManager::requestBuildBuilding(Building *building, double money)
 {
-	if(building->getBuildingType() == BuildingService){
+	if(building->getBuildingType() == Buildings::Type::BuildingService){
 		ServiceBuilding *serviceBuilding = (ServiceBuilding*) building;
 		if(money >= serviceBuilding->getCost() && canPutServiceBuilding(serviceBuilding)){
 			ServiceBuilding* newBuilding = nullptr;
-			if(serviceBuilding->getServiceType() == Power){
+			if(serviceBuilding->getServiceType() == Buildings::Service::Type::Power){
 				newBuilding = new PowerBuilding(serviceBuilding->getPosX(), serviceBuilding->getPosY(), ressourceManager, ((PowerBuilding*)serviceBuilding)->getPowerType());
 				serviceBuildings.append(newBuilding);
 			}
 
 			for(int i = serviceBuilding->getPosX()/ZONE_SQUARE_SIZE; i < (serviceBuilding->getPosX()+serviceBuilding->getWidth())/ZONE_SQUARE_SIZE; i++){
 				for(int j = serviceBuilding->getPosY()/ZONE_SQUARE_SIZE; j < (serviceBuilding->getPosY()+serviceBuilding->getHeight())/ZONE_SQUARE_SIZE; j++){
-					if(zoneGrid[i][j] != nullptr && zoneGrid[i][j]->getZoneType() != None){
-						zoneGrid[i][j]->setZoneType(None);
+					if(zoneGrid[i][j] != nullptr && zoneGrid[i][j]->getZoneType() != Grid::Zone::Type::None){
+						zoneGrid[i][j]->setZoneType(Grid::Zone::Type::None);
 						if(zoneGrid[i][j]->getBuilding()!=nullptr){
 							ZoneBuilding *building = zoneGrid[i][j]->getBuilding();
 							for(int i=0;i<building->getCoveringZones().count();i++){
 								building->getCoveringZones().value(i)->setBuilding(nullptr);
 							}
+							zoneBuildings.removeAll(building);
 							emit buildingRemoved(building);
 							delete building;
 						}
@@ -215,12 +216,12 @@ void MapManager::updateAdjacentRoadZones(RoadSquare *roadSquare)
 				zoneX = roadSquare->getPosX() + i*ZONE_SQUARE_SIZE;
 				zoneY = (roadSquare->getPosY()+ROAD_SQUARE_SIZE) + j*ZONE_SQUARE_SIZE;
 				if((zoneX < ZONE_GRID_SIZE*ZONE_SQUARE_SIZE) && (zoneY < ZONE_GRID_SIZE*ZONE_SQUARE_SIZE) && zoneX >= 0 && zoneY >= 0 && zoneGrid[zoneX/ZONE_SQUARE_SIZE][zoneY/ZONE_SQUARE_SIZE] == nullptr && roadGrid[zoneX/ROAD_SQUARE_SIZE][zoneY/ROAD_SQUARE_SIZE] == nullptr){
-					TerrainType terrainType = terrainGrid[zoneX/TERRAIN_SQUARE_SIZE][zoneY/TERRAIN_SQUARE_SIZE]->getTerrainType();
-					if(terrainType == Water || terrainType == Mountain){
+					Grid::Terrain::Type terrainType = terrainGrid[zoneX/TERRAIN_SQUARE_SIZE][zoneY/TERRAIN_SQUARE_SIZE]->getTerrainType();
+					if(terrainType == Grid::Terrain::Type::Water || terrainType == Grid::Terrain::Type::Mountain){
 						break;
 					}
 					else{
-						ZoneSquare *newZoneSquare = new ZoneSquare(zoneX, zoneY, None, ressourceManager);
+						ZoneSquare *newZoneSquare = new ZoneSquare(zoneX, zoneY, Grid::Zone::Type::None, ressourceManager);
 						zoneGrid[zoneX/ZONE_SQUARE_SIZE][zoneY/ZONE_SQUARE_SIZE] = newZoneSquare;
 						emit zoneSquareCreated(newZoneSquare);
 					}
@@ -234,12 +235,12 @@ void MapManager::updateAdjacentRoadZones(RoadSquare *roadSquare)
 				zoneX = roadSquare->getPosX() + i*ZONE_SQUARE_SIZE;
 				zoneY = (roadSquare->getPosY()-ZONE_SQUARE_SIZE) - j*ZONE_SQUARE_SIZE;
 				if((zoneX < ZONE_GRID_SIZE*ZONE_SQUARE_SIZE) && (zoneY < ZONE_GRID_SIZE*ZONE_SQUARE_SIZE) && zoneX >= 0 && zoneY >= 0 && zoneGrid[zoneX/ZONE_SQUARE_SIZE][zoneY/ZONE_SQUARE_SIZE] == nullptr && roadGrid[zoneX/ROAD_SQUARE_SIZE][zoneY/ROAD_SQUARE_SIZE] == nullptr){
-					TerrainType terrainType = terrainGrid[zoneX/TERRAIN_SQUARE_SIZE][zoneY/TERRAIN_SQUARE_SIZE]->getTerrainType();
-					if(terrainType == Water || terrainType == Mountain){
+					Grid::Terrain::Type terrainType = terrainGrid[zoneX/TERRAIN_SQUARE_SIZE][zoneY/TERRAIN_SQUARE_SIZE]->getTerrainType();
+					if(terrainType == Grid::Terrain::Type::Water || terrainType == Grid::Terrain::Type::Mountain){
 						break;
 					}
 					else{
-						ZoneSquare *newZoneSquare = new ZoneSquare(zoneX, zoneY, None, ressourceManager);
+						ZoneSquare *newZoneSquare = new ZoneSquare(zoneX, zoneY, Grid::Zone::Type::None, ressourceManager);
 						zoneGrid[zoneX/ZONE_SQUARE_SIZE][zoneY/ZONE_SQUARE_SIZE] = newZoneSquare;
 						emit zoneSquareCreated(newZoneSquare);
 					}
@@ -253,12 +254,12 @@ void MapManager::updateAdjacentRoadZones(RoadSquare *roadSquare)
 				zoneX = (roadSquare->getPosX() - ZONE_SQUARE_SIZE) - j*ZONE_SQUARE_SIZE;
 				zoneY = roadSquare->getPosY() + i* ZONE_SQUARE_SIZE;
 				if((zoneX < ZONE_GRID_SIZE*ZONE_SQUARE_SIZE) && (zoneY < ZONE_GRID_SIZE*ZONE_SQUARE_SIZE) && zoneX >= 0 && zoneY >= 0 && zoneGrid[zoneX/ZONE_SQUARE_SIZE][zoneY/ZONE_SQUARE_SIZE] == nullptr && roadGrid[zoneX/ROAD_SQUARE_SIZE][zoneY/ROAD_SQUARE_SIZE] == nullptr){
-					TerrainType terrainType = terrainGrid[zoneX/TERRAIN_SQUARE_SIZE][zoneY/TERRAIN_SQUARE_SIZE]->getTerrainType();
-					if(terrainType == Water || terrainType == Mountain){
+					Grid::Terrain::Type terrainType = terrainGrid[zoneX/TERRAIN_SQUARE_SIZE][zoneY/TERRAIN_SQUARE_SIZE]->getTerrainType();
+					if(terrainType == Grid::Terrain::Type::Water || terrainType == Grid::Terrain::Type::Mountain){
 						break;
 					}
 					else{
-						ZoneSquare *newZoneSquare = new ZoneSquare(zoneX, zoneY, None, ressourceManager);
+						ZoneSquare *newZoneSquare = new ZoneSquare(zoneX, zoneY, Grid::Zone::Type::None, ressourceManager);
 						zoneGrid[zoneX/ZONE_SQUARE_SIZE][zoneY/ZONE_SQUARE_SIZE] = newZoneSquare;
 						emit zoneSquareCreated(newZoneSquare);
 					}
@@ -272,12 +273,12 @@ void MapManager::updateAdjacentRoadZones(RoadSquare *roadSquare)
 				zoneX = (roadSquare->getPosX() + ROAD_SQUARE_SIZE) + j*ZONE_SQUARE_SIZE;
 				zoneY = roadSquare->getPosY() + i* ZONE_SQUARE_SIZE;
 				if((zoneX < ZONE_GRID_SIZE*ZONE_SQUARE_SIZE) && (zoneY < ZONE_GRID_SIZE*ZONE_SQUARE_SIZE) && zoneX >= 0 && zoneY >= 0 && zoneGrid[zoneX/ZONE_SQUARE_SIZE][zoneY/ZONE_SQUARE_SIZE] == nullptr && roadGrid[zoneX/ROAD_SQUARE_SIZE][zoneY/ROAD_SQUARE_SIZE] == nullptr){
-					TerrainType terrainType = terrainGrid[zoneX/TERRAIN_SQUARE_SIZE][zoneY/TERRAIN_SQUARE_SIZE]->getTerrainType();
-					if(terrainType == Water || terrainType == Mountain){
+					Grid::Terrain::Type terrainType = terrainGrid[zoneX/TERRAIN_SQUARE_SIZE][zoneY/TERRAIN_SQUARE_SIZE]->getTerrainType();
+					if(terrainType == Grid::Terrain::Type::Water || terrainType == Grid::Terrain::Type::Mountain){
 						break;
 					}
 					else{
-						ZoneSquare *newZoneSquare = new ZoneSquare(zoneX, zoneY, None, ressourceManager);
+						ZoneSquare *newZoneSquare = new ZoneSquare(zoneX, zoneY, Grid::Zone::Type::None, ressourceManager);
 						zoneGrid[zoneX/ZONE_SQUARE_SIZE][zoneY/ZONE_SQUARE_SIZE] = newZoneSquare;
 						emit zoneSquareCreated(newZoneSquare);
 					}
@@ -348,24 +349,24 @@ void MapManager::requestDestroyRoad(RoadSquare *roadSquare)
 	}
 }
 
-bool MapManager::generateNewZoneBuilding(ZoneType zoneType)
+bool MapManager::generateNewZoneBuilding(Grid::Zone::Type zoneType)
 {
 	for(int x=0;x<ZONE_GRID_SIZE;x++){
 		for(int y=0;y<ZONE_GRID_SIZE;y++){
-			if(zoneGrid[x][y] == nullptr || zoneGrid[x][y]->getZoneType()==None || zoneGrid[x][y]->getBuilding() != nullptr){
+			if(zoneGrid[x][y] == nullptr || zoneGrid[x][y]->getZoneType()==Grid::Zone::Type::None || zoneGrid[x][y]->getBuilding() != nullptr){
 				continue;
 			}
-			else if(zoneType == Residential){
-				if(putZoneBuilding(x, y, 4, 8, zoneType) || putZoneBuilding(x, y, 4, 4, zoneType) || putZoneBuilding(x, y, 1, 2, zoneType) || putZoneBuilding(x, y, 2, 1, zoneType)){
+			else if(zoneType == Grid::Zone::Type::Residential){
+				if(putZoneBuilding(x, y, 8, 4, zoneType) || putZoneBuilding(x, y, 4, 8, zoneType) || putZoneBuilding(x, y, 4, 4, zoneType) || putZoneBuilding(x, y, 1, 2, zoneType) || putZoneBuilding(x, y, 2, 1, zoneType)){
 					return true;
 				}
 			}
-			else if(zoneType == Commercial){
+			else if(zoneType == Grid::Zone::Type::Commercial){
 				if(putZoneBuilding(x, y, 4, 4, zoneType) || putZoneBuilding(x, y, 1, 2, zoneType) || putZoneBuilding(x, y, 2, 1, zoneType)){
 					return true;
 				}
 			}
-			else if(zoneType == Industrial){
+			else if(zoneType == Grid::Zone::Type::Industrial){
 				if(putZoneBuilding(x, y, 4, 4, zoneType) || putZoneBuilding(x, y, 3, 2, zoneType) || putZoneBuilding(x, y, 2, 3, zoneType)){
 					return true;
 				}
@@ -375,7 +376,7 @@ bool MapManager::generateNewZoneBuilding(ZoneType zoneType)
 	return false;
 }
 
-bool MapManager::putZoneBuilding(int x, int y, int widthGrid, int heightGrid, ZoneType zoneType)
+bool MapManager::putZoneBuilding(int x, int y, int widthGrid, int heightGrid, Grid::Zone::Type zoneType)
 {
 	bool anyAdjacentToRoad = false;
 	if(x < 0 || y < 0 || x+widthGrid >= ZONE_GRID_SIZE || y+heightGrid >= ZONE_GRID_SIZE){
@@ -397,10 +398,10 @@ bool MapManager::putZoneBuilding(int x, int y, int widthGrid, int heightGrid, Zo
 	}
 
 	ZoneBuilding *newBuilding;
-	if(zoneType==Residential){
+	if(zoneType==Grid::Zone::Type::Residential){
 		newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*widthGrid, ZONE_SQUARE_SIZE*heightGrid, ressourceManager);
 	}
-	else if(zoneType==Commercial){
+	else if(zoneType==Grid::Zone::Type::Commercial){
 		newBuilding = new CommercialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*widthGrid, ZONE_SQUARE_SIZE*heightGrid, ressourceManager);
 	}
 	else{
@@ -432,7 +433,7 @@ bool MapManager::canPutServiceBuilding(ServiceBuilding *building)
 	//Vérification du terrain
 	for(int i=x/TERRAIN_SQUARE_SIZE; i < (x+width)/TERRAIN_SQUARE_SIZE; i++){
 		for(int j=y/TERRAIN_SQUARE_SIZE; j < (y+height)/TERRAIN_SQUARE_SIZE ; j++){
-			if(terrainGrid[i][j]->getTerrainType() == Water || terrainGrid[i][j]->getTerrainType() == Mountain){
+			if(terrainGrid[i][j]->getTerrainType() == Grid::Terrain::Type::Water || terrainGrid[i][j]->getTerrainType() == Grid::Terrain::Type::Mountain){
 				return false;
 			}
 		}
@@ -484,14 +485,14 @@ bool MapManager::isThereServiceBuilding(int x, int y)
 
 void MapManager::requestDestroyBuilding(Building *building)
 {
-	if(building->getBuildingType() == BuildingZone){
+	if(building->getBuildingType() == Buildings::Type::BuildingZone){
 		ZoneBuilding *zoneBuilding = (ZoneBuilding*) building;
 		for(int i=0;i<zoneBuilding->getCoveringZones().count();i++){
 			zoneBuilding->getCoveringZones().value(i)->setBuilding(nullptr);
 		}
 		zoneBuildings.removeAll(building);
 	}
-	else if(building->getBuildingType() == BuildingService){
+	else if(building->getBuildingType() == Buildings::Type::BuildingService){
 		serviceBuildings.removeAll(building);
 	}
 

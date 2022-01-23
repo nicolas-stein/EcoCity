@@ -11,6 +11,8 @@ public:
 
 	int getMaxClients() const;
 
+	double getPollution() const;
+
 private:
 	int maxWorkers;
 	int maxClients;

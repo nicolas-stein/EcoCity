@@ -12,6 +12,8 @@ public:
 	int getResidents() const;
 	void addResidents(int newResidents);
 
+	double getPollution() const;
+
 private :
 	int residents;
 	int maxResidents;

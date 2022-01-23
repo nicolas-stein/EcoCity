@@ -17,13 +17,14 @@ class BuildCursor : public QObject, public QGraphicsPixmapItem
 {
 	Q_OBJECT
 public:
-	BuildCursor();
+	BuildCursor(QObject *parent = nullptr);
 	~BuildCursor();
 	void setSquareToBuild(GridSquare *newSquareToBuild);
 	void setBuildingToBuild(Building *building);
 	void setPosition(int x, int y);
 
 	void setManagers(RessourceManager *ressourceManager, MapManager *mapManager);
+	void freeSquareBuildingToBuild();
 
 private :
 	GridSquare *squareToBuild = nullptr;
@@ -32,6 +33,7 @@ private :
 private:
 	RessourceManager *ressourceManager;
 	MapManager *mapManager;
+
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 signals:

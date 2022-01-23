@@ -27,6 +27,7 @@ SOURCES += \
     Game/ressourcemanager.cpp \
     Scenes/maingamescene.cpp \
     Scenes/mainmenuscene.cpp \
+    customgraphicspixmapitem.cpp \
     customgraphicsview.cpp \
     main.cpp \
     mainwindow.cpp
@@ -52,6 +53,7 @@ HEADERS += \
     Game/buildcursor.h \
     Scenes/maingamescene.h \
     Scenes/mainmenuscene.h \
+    customgraphicspixmapitem.h \
     customgraphicsview.h \
     mainwindow.h
 
@@ -68,3 +70,5 @@ OTHER_FILES += \
     ressources_audio.qrc \
     ressources_graphics.qrc \
     ressources_others.qrc
+
+DISTFILES +=

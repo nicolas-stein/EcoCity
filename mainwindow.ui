@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1280</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -68,6 +68,19 @@
         <property name="verticalSpacing">
          <number>6</number>
         </property>
+        <item row="0" column="5">
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="1" column="0" colspan="2">
          <widget class="QPushButton" name="pushButton_gameSpeed">
           <property name="minimumSize">
@@ -80,19 +93,6 @@
            <string>Vitesse : x1</string>
           </property>
          </widget>
-        </item>
-        <item row="0" column="4">
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_population">
@@ -107,6 +107,13 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="label_money_variation">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="1">
          <widget class="QLabel" name="label_population_variation">
           <property name="sizePolicy">
@@ -117,6 +124,19 @@
           </property>
           <property name="text">
            <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_money">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Argent : 0</string>
           </property>
          </widget>
         </item>
@@ -148,17 +168,70 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_money">
+        <item row="0" column="3" rowspan="4">
+         <widget class="QGroupBox" name="groupBox_2">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="text">
-           <string>Argent : 0</string>
+          <property name="title">
+           <string>Electricité</string>
           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_electrical_production">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Production  :</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_electrical_consumption">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Consommation :</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="progressBar_electrical">
+             <property name="minimumSize">
+              <size>
+               <width>154</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QProgressBar::chunk{background-color: #33EEFF}</string>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="textVisible">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item row="0" column="2" rowspan="4">
@@ -257,60 +330,39 @@
           </layout>
          </widget>
         </item>
-        <item row="0" column="3" rowspan="4">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
+        <item row="0" column="4" rowspan="4">
+         <widget class="QGroupBox" name="groupBox_3">
           <property name="title">
-           <string>Electricité</string>
+           <string>Pollution</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QLabel" name="label_electrical_production">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QLabel" name="label_pollution_emissions">
              <property name="text">
-              <string>Production  :</string>
+              <string>Emissions : </string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_electrical_consumption">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QLabel" name="label_pollution_emissions_per_hab">
              <property name="text">
-              <string>Consommation :</string>
+              <string>Emissions par hab. : </string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QProgressBar" name="progressBar_electrical">
+            <widget class="QProgressBar" name="progressBar_pollution_emissions">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>154</width>
                <height>0</height>
               </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QProgressBar::chunk{background-color: #33EEFF}</string>
              </property>
              <property name="value">
               <number>0</number>
@@ -321,13 +373,6 @@
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLabel" name="label_money_variation">
-          <property name="text">
-           <string/>
-          </property>
          </widget>
         </item>
        </layout>
@@ -355,7 +400,7 @@
            <bool>true</bool>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_routes">
            <property name="enabled">
@@ -374,7 +419,8 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Route à deux voies</string>
+               <string>Route à deux voies
+1 k€</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -393,7 +439,8 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Route à quatres voies</string>
+               <string>Route à quatres voies
+Indisponible</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -409,7 +456,8 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Autoroute</string>
+               <string>Autoroute
+Indisponible</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -545,7 +593,8 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Centrale solaire</string>
+               <string>Centrale à charbon
+100 k€</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -561,7 +610,93 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Centrale nucléaire</string>
+               <string>Centrale au
+gaz : 300 k€</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_place_power_3">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Centrale au pétrole
+500 k€</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_place_power_4">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Eolienne
+400 k€</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_place_power_5">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Petite centrale
+solaire : 250 k€</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_place_power_6">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Grande centrale
+solaire : 750 k€</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_place_power_7">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Centrale nucléaire
+2.5 M€</string>
               </property>
               <property name="checkable">
                <bool>true</bool>

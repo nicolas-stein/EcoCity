@@ -17,32 +17,32 @@ public:
 
 	QMap<Tooltips, QPixmap> *getTooltipsPixmaps();
 
-	QMap<TerrainType, QPixmap> *getTerrainPixmaps();
+	QMap<Grid::Terrain::Type, QPixmap> *getTerrainPixmaps();
 
-	QMap<RoadType, QMap<RoadAngle, QPixmap>> *getRoadPixmaps();
+	QMap<Grid::Road::Type, QMap<Grid::Road::Angle, QPixmap>> *getRoadPixmaps();
 
-	QMap<ZoneType, QPixmap> *getZonePixmaps();
+	QMap<Grid::Zone::Type, QPixmap> *getZonePixmaps();
 
-	QMap<ZoneType, QList<QPixmap>> *getZoneBuildingPixmaps();
+	QMap<Grid::Zone::Type, QList<QPixmap>> *getZoneBuildingPixmaps();
 
-	QPixmap getZoneBuildingPixmap(ZoneType zoneType, int widthGrid, int heightGrid, unsigned randomPixmapNumber);
+	QPixmap getZoneBuildingPixmap(Grid::Zone::Type zoneType, int widthGrid, int heightGrid, unsigned randomPixmapNumber);
 
-	QMap<PowerType, QPixmap> *getPowerBuildingPixmaps();
+	QMap<Buildings::Service::PowerType, QPixmap> *getPowerBuildingPixmaps();
 
 private:
 	QMap<Tooltips, QPixmap> tooltipsPixmaps;
 
-	QMap<TerrainType, QPixmap> terrainPixmaps;
-	QMap<RoadAngle, QPixmap> twoLanesPixmaps;
-	QMap<RoadType, QMap<RoadAngle, QPixmap>> roadPixmaps;
-	QMap<ZoneType, QPixmap> zonePixmaps;
+	QMap<Grid::Terrain::Type, QPixmap> terrainPixmaps;
+	QMap<Grid::Road::Angle, QPixmap> twoLanesPixmaps;
+	QMap<Grid::Road::Type, QMap<Grid::Road::Angle, QPixmap>> roadPixmaps;
+	QMap<Grid::Zone::Type, QPixmap> zonePixmaps;
 
-	QMap<ZoneType, QList<QPixmap>> zoneBuildingPixmaps;
+	QMap<Grid::Zone::Type, QList<QPixmap>> zoneBuildingPixmaps;
 	QList<QPixmap> residentialPixmaps;
 	QList<QPixmap> commercialPixmaps;
 	QList<QPixmap> industrialPixmaps;
 
-	QMap<PowerType, QPixmap> powerBuildingPixmaps;
+	QMap<Buildings::Service::PowerType, QPixmap> powerBuildingPixmaps;
 
 	void loadTooltipsPixmaps();
 

@@ -1,7 +1,4 @@
 <RCC>
-    <qresource prefix="/pixmaps">
-        <file alias="mainMenuLogo">Files/Pixmaps/main_menu_logo.png</file>
-    </qresource>
     <qresource prefix="/pixmaps/terrain">
         <file alias="grassTile">Files/Pixmaps/terrain/grassTile.jpg</file>
         <file alias="waterTile">Files/Pixmaps/terrain/waterTile.jpg</file>
@@ -30,6 +27,7 @@
         <file alias="caravan">Files/Pixmaps/zones/residential/caravan.png</file>
         <file alias="caravan_rotate">Files/Pixmaps/zones/residential/caravan_rotate.png</file>
         <file alias="skyscrapper_1">Files/Pixmaps/zones/residential/skyscrapper_1.png</file>
+        <file alias="skyscrapper_2_rotate">Files/Pixmaps/zones/residential/skyscrapper_2_rotate.png</file>
     </qresource>
     <qresource prefix="/pixmaps/zones/commercial">
         <file alias="burger">Files/Pixmaps/zones/commercial/burger.png</file>
@@ -44,10 +42,20 @@
     </qresource>
     <qresource prefix="/pixmaps/services/power">
         <file alias="nuclear">Files/Pixmaps/services/power/nuclear.png</file>
-        <file alias="solar">Files/Pixmaps/services/power/solar.png</file>
+        <file alias="small_solar">Files/Pixmaps/services/power/small_solar.png</file>
+        <file alias="big_solar">Files/Pixmaps/services/power/big_solar.png</file>
+        <file alias="wind">Files/Pixmaps/services/power/wind.png</file>
+        <file alias="coal">Files/Pixmaps/services/power/coal.png</file>
+        <file alias="gas">Files/Pixmaps/services/power/gas.png</file>
+        <file alias="oil">Files/Pixmaps/services/power/oil.png</file>
     </qresource>
     <qresource prefix="/pixmaps/tooltips">
         <file alias="no_road">Files/Pixmaps/tooltips/no_road.png</file>
         <file alias="no_power">Files/Pixmaps/tooltips/no_power.png</file>
+    </qresource>
+    <qresource prefix="/pixmaps/main_menu">
+        <file alias="main_menu_logo">Files/Pixmaps/main_menu/main_menu_logo.png</file>
+        <file alias="music">Files/Pixmaps/main_menu/music.png</file>
+        <file alias="sound-effect">Files/Pixmaps/main_menu/sound-effect.png</file>
     </qresource>
 </RCC>

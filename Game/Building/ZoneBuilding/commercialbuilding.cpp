@@ -1,6 +1,6 @@
 #include "commercialbuilding.h"
 
-CommercialBuilding::CommercialBuilding(int posX, int posY, int width, int height, RessourceManager *ressourceManager): ZoneBuilding(posX, posY, width, height, Commercial, ressourceManager)
+CommercialBuilding::CommercialBuilding(int posX, int posY, int width, int height, RessourceManager *ressourceManager): ZoneBuilding(posX, posY, width, height, Grid::Zone::Type::Commercial, ressourceManager)
 {
 	if(widthGrid() == 4 && heightGrid() == 4){
 		maxWorkers = 10;
@@ -22,4 +22,9 @@ int CommercialBuilding::getMaxWorkers() const
 int CommercialBuilding::getMaxClients() const
 {
 	return maxClients;
+}
+
+double CommercialBuilding::getPollution() const
+{
+	return maxWorkers * 3;
 }

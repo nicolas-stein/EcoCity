@@ -1,9 +1,8 @@
 #include "gamelogicthread.h"
 
-GameLogicThread::GameLogicThread()
+GameLogicThread::GameLogicThread(QObject *parent): QThread{parent}
 {
-	updateTimer = new QTimer();
-	updateTimer->moveToThread(this);
+	moveToThread(this);
 
 	ressourceManager.loadRessources();
 	mapManager.initMap(&ressourceManager);
@@ -29,6 +28,7 @@ void GameLogicThread::run()
 	gameDate = QDate::currentDate();
 	emit gameDateChanged(gameDate);
 	emit gameMoneyUpdated(money);
+	updateTimer = new QTimer(this);
 	connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateGameLogic()));
 	updateTimer->start(1000/GAME_UPS);
 
@@ -51,7 +51,7 @@ void GameLogicThread::addResidents(int residents)
 			return;
 		}
 		random = QRandomGenerator::global()->generate() % buildings.size();
-		if(buildings.at(random)->getZoneType() == Residential){
+		if(buildings.at(random)->getZoneType() == Grid::Zone::Type::Residential){
 			if(((ResidentialBuilding*)buildings.at(random))->getResidents() < ((ResidentialBuilding*)buildings.at(random))->getMaxResidents()){
 				((ResidentialBuilding*)buildings.at(random))->addResidents(1);
 				i++;
@@ -66,12 +66,12 @@ void GameLogicThread::addResidents(int residents)
 	}
 }
 
-void GameLogicThread::collectMoney()
+void GameLogicThread::collectMoney(int daysInMonth)
 {
 	QList<ZoneBuilding*> zoneBuildingList = mapManager.getZoneBuildings();
 	double collectedMoney = 0;
 	for(int i=0;i<zoneBuildingList.size();i++){
-		if(zoneBuildingList.at(i)->getZoneType()==Residential && zoneBuildingList.at(i)->isConnectedToPower()){
+		if(zoneBuildingList.at(i)->getZoneType()==Grid::Zone::Type::Residential && zoneBuildingList.at(i)->isConnectedToPower()){
 			collectedMoney += ((ResidentialBuilding*)zoneBuildingList.at(i))->getResidents()*100;
 		}
 	}
@@ -81,9 +81,9 @@ void GameLogicThread::collectMoney()
 		collectedMoney -= serviceBuildingList.at(i)->getOperationalCost();
 	}
 
-	collectedMoney -= mapManager.getRoadCount()*75;
+	collectedMoney -= mapManager.getRoadCount()*200;
 
-	changeMoney(collectedMoney);
+	changeMoney(collectedMoney/daysInMonth);
 }
 
 void GameLogicThread::setGameSpeed(double newGameSpeed)
@@ -93,23 +93,22 @@ void GameLogicThread::setGameSpeed(double newGameSpeed)
 
 void GameLogicThread::updateGameDemands()
 {
-	int totalResidents = 0;
-	int totalResidentialCapacity = 0;
-	int totalWorkCapacity = 0;
-	int totalCommercialCapacity = 0;
-
+	totalResidentialCapacity = 0;
+	totalResidents = 0;
+	totalWorkCapacity = 0;
+	totalCommercialCapacity = 0;
 	QList<ZoneBuilding*> buildingList = mapManager.getZoneBuildings();
 
 	for(int i=0;i<buildingList.size();i++){
-		if(buildingList.at(i)->getZoneType() == Residential){
+		if(buildingList.at(i)->getZoneType() == Grid::Zone::Type::Residential){
 			totalResidentialCapacity += ((ResidentialBuilding*)buildingList.at(i))->getMaxResidents();
 			totalResidents += ((ResidentialBuilding*)buildingList.at(i))->getResidents();
 		}
-		else if(buildingList.at(i)->getZoneType() == Commercial){
+		else if(buildingList.at(i)->getZoneType() == Grid::Zone::Type::Commercial){
 			totalWorkCapacity += ((CommercialBuilding*)buildingList.at(i))->getMaxWorkers();
 			totalCommercialCapacity += ((CommercialBuilding*)buildingList.at(i))->getMaxClients();
 		}
-		else if(buildingList.at(i)->getZoneType() == Industrial){
+		else if(buildingList.at(i)->getZoneType() == Grid::Zone::Type::Industrial){
 			totalWorkCapacity += ((IndustrialBuilding*)buildingList.at(i))->getMaxWorkers();
 		}
 	}
@@ -169,9 +168,9 @@ void GameLogicThread::updateBuildingsPower(int *notPoweredBuildings, int *notCon
 	PowerBuilding *currentPowerBuilding;
 
 	for(int i=0;i<serviceBuildings.size();i++){
-		if(serviceBuildings.value(i)->getServiceType()==Power){
+		if(serviceBuildings.value(i)->getServiceType()==Buildings::Service::Type::Power){
 			currentPowerBuilding = (PowerBuilding*)serviceBuildings.value(i);
-			totalElectricalProduction += currentPowerBuilding->getPowerProduction();
+			totalElectricalProduction += currentPowerBuilding->getCurrentPowerProduction();
 			if(!currentPowerBuilding->isConnectedToRoad()){
 				*notConnectedToRoadBuildings = *notConnectedToRoadBuildings+1;
 			}
@@ -180,17 +179,39 @@ void GameLogicThread::updateBuildingsPower(int *notPoweredBuildings, int *notCon
 	double electricalConsumption = 0;
 
 	for(int i=0;i<zoneBuildings.size();i++){
-		if(totalElectricalProduction-electricalConsumption > zoneBuildings.value(i)->getPowerConsumption()){
-			zoneBuildings.value(i)->setConnectedToPower(true);
+		if(totalElectricalProduction-electricalConsumption > zoneBuildings.at(i)->getPowerConsumption()){
+			zoneBuildings.at(i)->setConnectedToPower(true);
 			electricalConsumption += zoneBuildings.value(i)->getPowerConsumption();
 		}
 		else{
-			zoneBuildings.value(i)->setConnectedToPower(false);
+			zoneBuildings.at(i)->setConnectedToPower(false);
 			*notPoweredBuildings = *notPoweredBuildings+1;
 		}
 	}
 
 	emit gamePowerUpdated(totalElectricalProduction, electricalConsumption);
+}
+
+void GameLogicThread::updateGamePollution()
+{
+	double pollution = 0;
+
+	QList<ServiceBuilding*> serviceBuildings = mapManager.getServiceBuildings();
+	QList<ZoneBuilding*> zoneBuildings = mapManager.getZoneBuildings();
+
+	for(int i=0;i<serviceBuildings.size();i++){
+		pollution += serviceBuildings.at(i)->getPollution();
+	}
+
+	for(int i=0;i<zoneBuildings.size();i++){
+		pollution += zoneBuildings.at(i)->getPollution();
+	}
+
+	if(pollution>totalResidents*15){
+		pollution = totalResidents*15;
+	}
+
+	emit gamePollutionUpdated(pollution, totalResidents*15);
 }
 
 void GameLogicThread::changeMoney(double amount)
@@ -205,26 +226,27 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 		return;
 	}
 
-	tickCounter++;
-	if(tickCounter >= 60/gameSpeed){
-		tickCounter = 0;
-	}
-
 	if(tickCounter == 0){ //Every seconds
 		//QElapsedTimer timer;
 		//timer.start();
 
+		//Game date update
+		gameDate = gameDate.addDays(1);
+		emit gameDateChanged(gameDate);
+
+		collectMoney(gameDate.daysInMonth());
+
 		//Generating new zone buildings
-		if(QRandomGenerator::global()->generate()%100 > 60){
-			mapManager.generateNewZoneBuilding(Residential);
+		if(QRandomGenerator::global()->generate()%100 > 40){
+			mapManager.generateNewZoneBuilding(Grid::Zone::Type::Residential);
 		}
 
-		if(QRandomGenerator::global()->generate()%100 > 60){
-			mapManager.generateNewZoneBuilding(Commercial);
+		if(QRandomGenerator::global()->generate()%100 > 40){
+			mapManager.generateNewZoneBuilding(Grid::Zone::Type::Commercial);
 		}
 
-		if(QRandomGenerator::global()->generate()%100 > 60){
-			mapManager.generateNewZoneBuilding(Industrial);
+		if(QRandomGenerator::global()->generate()%100 > 20){
+			mapManager.generateNewZoneBuilding(Grid::Zone::Type::Industrial);
 		}
 
 		QString statusBarMessage = "";
@@ -243,25 +265,21 @@ void GameLogicThread::updateGameLogic()	//Every 1/60 seconds
 		}
 
 		if(notPoweredBuildings > 1){
-			statusBarMessage += "<strong><font color=orange>"+QString::number(notPoweredBuildings)+" batiments ne sont pas alimentés en électricité !</font></strong> ";
+			statusBarMessage += "<strong><font color=orange>"+QString::number(notPoweredBuildings)+"  batiments ne sont pas alimentés en électricité !</font></strong> ";
 		}
 		else if(notPoweredBuildings > 0){
 			statusBarMessage += "<strong><font color=orange>"+QString::number(notPoweredBuildings)+" batiment n'est pas alimenté en électricité !</font></strong> ";
 		}
 
+		updateGamePollution();
+
 		emit changeStatusBarMessage(statusBarMessage);
 
-
-		if(gameDate.addDays(1).day() == 1){ //Récolte les impots en début de mois
-			collectMoney();
-		}
-
-		//Game date update
-		gameDate = gameDate.addDays(1);
-		emit gameDateChanged(gameDate);
-
-
-
 		//qDebug() << "Time taken : " << timer.elapsed() << "ms";
+	}
+
+	tickCounter++;
+	if(tickCounter >= 60/gameSpeed){
+		tickCounter = 0;
 	}
 }

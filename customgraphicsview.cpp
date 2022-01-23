@@ -6,12 +6,17 @@ CustomGraphicsView::CustomGraphicsView(QWidget *parent): QGraphicsView(parent)
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-	QOpenGLWidget *gl = new QOpenGLWidget();
+	openGlWidget = new QOpenGLWidget(this);
 	QSurfaceFormat format;
 	format.setSamples(256);
 	format.setSwapInterval(1);
-	gl->setFormat(format);
-	setViewport(gl);
+	openGlWidget->setFormat(format);
+	setViewport(openGlWidget);
+}
+
+CustomGraphicsView::~CustomGraphicsView()
+{
+	openGlWidget->deleteLater();
 }
 
 void CustomGraphicsView::wheelEvent(QWheelEvent *event)
@@ -24,13 +29,13 @@ void CustomGraphicsView::wheelEvent(QWheelEvent *event)
 
 	QRectF poly = mapToScene(viewport()->geometry()).boundingRect();
 	if(event->angleDelta().y() < 0){
-		if(poly.width() < TERRAIN_GRID_SIZE*TERRAIN_SQUARE_SIZE*3/4 && poly.height() < TERRAIN_GRID_SIZE*TERRAIN_SQUARE_SIZE*3/4){
+		if(poly.width() < TERRAIN_GRID_SIZE*TERRAIN_SQUARE_SIZE*0.9 && poly.height() < TERRAIN_GRID_SIZE*TERRAIN_SQUARE_SIZE*0.9){
 			scale(0.9, 0.9);
 			event->accept();
 			return;
 		}
 	}
-	else{
+	else if(event->angleDelta().y() > 0){
 		if(poly.width() > TERRAIN_SQUARE_SIZE*6 && poly.height() > TERRAIN_SQUARE_SIZE*6){
 			scale(1.1, 1.1);
 			event->accept();
@@ -39,11 +44,6 @@ void CustomGraphicsView::wheelEvent(QWheelEvent *event)
 	}
 
 	event->ignore();
-}
-
-void CustomGraphicsView::setResizeEnable(bool newResizeEnable)
-{
-	resizeEnable = newResizeEnable;
 }
 
 void CustomGraphicsView::setZoomEnbale(bool newZoomEnbale)
@@ -103,12 +103,11 @@ void CustomGraphicsView::mouseMoveEvent(QMouseEvent *event)
 
 void CustomGraphicsView::resizeEvent(QResizeEvent *event)
 {
-	if(!resizeEnable){
-		QGraphicsView::resizeEvent(event);
-		return;
-	}
+	Q_UNUSED(event);
 	QRectF poly = mapToScene(viewport()->geometry()).boundingRect();
-	if((poly.width() < TERRAIN_GRID_SIZE*TERRAIN_SQUARE_SIZE*3/4 && poly.height() < TERRAIN_GRID_SIZE*TERRAIN_SQUARE_SIZE*3/4) || (poly.width() > TERRAIN_SQUARE_SIZE*6 && poly.height() > TERRAIN_SQUARE_SIZE*6)){
-		fitInView(scene()->width()/4, scene()->height()/4, scene()->width()/2, scene()->height()/2, Qt::KeepAspectRatioByExpanding);
+	if(poly.width() > TERRAIN_GRID_SIZE*TERRAIN_SQUARE_SIZE || poly.height() > TERRAIN_GRID_SIZE*TERRAIN_SQUARE_SIZE){
+		fitInView(0, 0, scene()->width(), scene()->height(), Qt::KeepAspectRatioByExpanding);
 	}
+	event->ignore();
+	QGraphicsView::resizeEvent(event);
 }

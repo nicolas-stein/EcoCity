@@ -21,23 +21,31 @@
 
 #define BUILDING_MARGIN TERRAIN_SQUARE_MARGIN
 
-//Money
-#define MONEY_START 50e3
-
 enum Tooltips {NoRoad, NoPower};
 
-enum GridType {GridTerrain, GridZone, GridBuilding, GridRoad};
-enum TerrainType {Grass, Mountain, Rock, Water, Sand};
-enum ZoneType {None, Residential, Commercial, Industrial};
+namespace Buildings{
+	enum Type {BuildingZone, BuildingService};
+	namespace Service{
+		enum Type {Power};
+		enum PowerType {Coal, Gas, Oil, SmallSolar, BigSolar, Wind, Nuclear};
+	}
+}
 
-enum RoadType {TwoLanes, FourLanes, Highway};
-enum RoadAngle {Straight, Turn, TJunction, Cross, DeadEnd};
+namespace Grid{
+	enum Type {GridTerrain, GridZone, GridBuilding, GridRoad};
+	namespace Terrain{
+		enum Type {Grass, Mountain, Rock, Water, Sand};
+	}
+	namespace Zone {
+		enum Type {None, Residential, Commercial, Industrial};
+	}
+	namespace Road{
+		enum Type {TwoLanes, FourLanes, Highway};
+		enum Angle {Straight, Turn, TJunction, Cross, DeadEnd};
+	}
+}
 
-enum BuildingType {BuildingZone, BuildingService};
 
-enum ServiceBuildingType {Power};
-enum PowerType {SolarPower, NuclearPower};
-
-enum SoundEffects {RoadPlacement, ZonePlacement};
+enum SoundEffects {RoadPlacement, ZonePlacement, BuildingPlacement, DestroyLong, DestroyShort};
 
 #endif // CONSTANTS_H

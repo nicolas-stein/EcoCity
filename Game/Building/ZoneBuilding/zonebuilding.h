@@ -8,12 +8,12 @@ class ZoneSquare;
 class ZoneBuilding : public Building
 {
 public:
-	ZoneBuilding(int posX, int posY, int width, int height, ZoneType zoneType, RessourceManager *ressourceManager);
+	ZoneBuilding(int posX, int posY, int width, int height, Grid::Zone::Type zoneType, RessourceManager *ressourceManager);
 
 	void addCoveringZone(ZoneSquare* zoneSquare);
 	const QList<ZoneSquare *> &getCoveringZones() const;
 
-	ZoneType getZoneType() const;
+	Grid::Zone::Type getZoneType() const;
 	void updatePixmap(bool showToolTips);
 
 	double getPowerConsumption() const;
@@ -27,7 +27,7 @@ protected:
 
 private :
 	QList<ZoneSquare*> coveringZones;
-	ZoneType zoneType;
+	Grid::Zone::Type zoneType;
 };
 
 #endif // ZONEBUILDING_H

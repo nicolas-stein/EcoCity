@@ -3,40 +3,38 @@
 
 #include "constants.h"
 #include "Game/ressourcemanager.h"
+#include "customgraphicspixmapitem.h"
 
-#include <QGraphicsPixmapItem>
 #include <QPainter>
 
 class Building
 {
 public:
-	Building(int posX, int posY, int width, int height, BuildingType buildingType, RessourceManager *ressourceManager);
+	Building(int posX, int posY, int width, int height, Buildings::Type buildingType, RessourceManager *ressourceManager);
     virtual ~Building(){};
 
-	QGraphicsPixmapItem *getPixmapItem();
-
-	BuildingType getBuildingType() const;
+	CustomGraphicsPixmapItem *getPixmapItem();
+	Buildings::Type getBuildingType() const;
 
 	void setPos(int newPosX, int newPosY);
 	int getPosX() const;
 	int getPosY() const;
-
 	int getWidth() const;
 	int getHeight() const;
 
-	virtual void updatePixmap(bool showToolTips) = 0;
-
 	bool isConnectedToPower();
 
+	virtual void updatePixmap(bool showToolTips) = 0;
+	virtual double getPollution() const = 0;
 private :
 	int posX;
 	int posY;
-	BuildingType buildingType;
+	Buildings::Type buildingType;
 
 
 protected :
 	RessourceManager *ressourceManager;
-	QGraphicsPixmapItem pixmapItem;
+	CustomGraphicsPixmapItem pixmapItem;
 	int width;
 	int height;
 	bool connectedToPower = false;

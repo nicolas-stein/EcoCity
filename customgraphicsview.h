@@ -13,6 +13,7 @@ class CustomGraphicsView : public QGraphicsView
 	Q_OBJECT
 public:
 	CustomGraphicsView(QWidget *parent = nullptr);
+	~CustomGraphicsView();
 
 	// QWidget interface
 	void setPanEnable(bool newPanEnable);
@@ -21,8 +22,6 @@ public:
 
 	void setZoomEnbale(bool newZoomEnbale);
 
-	void setResizeEnable(bool newResizeEnable);
-
 protected:
 	void wheelEvent(QWheelEvent *event);
 private:
@@ -30,16 +29,13 @@ private:
 	bool pan = false;
 	bool panEnable = false;
 	bool zoomEnable = false;
-	bool resizeEnable = false;
+	QOpenGLWidget *openGlWidget;
 
 	// QWidget interface
 protected:
 	void mousePressEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
-
-	// QWidget interface
-protected:
 	void resizeEvent(QResizeEvent *event);
 };
 

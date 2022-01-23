@@ -1,11 +1,11 @@
 #include "servicebuilding.h"
 
-ServiceBuilding::ServiceBuilding(int posX, int posY, ServiceBuildingType serviceType, RessourceManager *ressourceManager): Building(posX, posY, 0, 0, BuildingService, ressourceManager), serviceType(serviceType)
+ServiceBuilding::ServiceBuilding(int posX, int posY, Buildings::Service::Type serviceType, RessourceManager *ressourceManager): Building(posX, posY, 0, 0, Buildings::Type::BuildingService, ressourceManager), serviceType(serviceType)
 {
 
 }
 
-ServiceBuildingType ServiceBuilding::getServiceType() const
+Buildings::Service::Type ServiceBuilding::getServiceType() const
 {
 	return serviceType;
 }

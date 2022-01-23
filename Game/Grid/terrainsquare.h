@@ -7,10 +7,10 @@ class TerrainSquare : public GridSquare
 {
 public:
 	TerrainSquare(double noise, int posX, int posY, RessourceManager *ressourceManager);
-	TerrainType getTerrainType() const;
+	Grid::Terrain::Type getTerrainType() const;
 
 private :
-	TerrainType terrainType;
+	Grid::Terrain::Type terrainType;
 };
 
 #endif // TERRAINSQUARE_H
