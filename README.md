@@ -9,7 +9,7 @@
 Hello everyone, here you can found all the files to download and execute our game **EcoCity**. <br />
 You can found the report about our projet at [*Rapport_Stein_Roussarie*](https://github.com/nicolas-stein/EcoCity/Rapport_Stein_Roussarie.pdf). <br />
 And if you want to know more about how to play and history look at [*Guide_de_jeu*](https://github.com/nicolas-stein/EcoCity/Guide_de_jeu.pdf). <br />
-To see the uml look [*UML_EcoCity*](https://github.com/nicolas-stein/EcoCity/UML_EcoCity.pdf). <br />
+To see the uml look [*UML_EcoCity*](https://github.com/nicolas-stein/EcoCity/UML_EcoCity.png). <br />
 We work a lot to make this project so we hope you going to love it. <br />
 
 ### Built With
