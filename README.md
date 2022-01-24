@@ -22,7 +22,7 @@ To play at this game you will need some compilator like QT, or other.
 
 ## Installation
 1. Clone the repo
-    ```sh
+  ```sh
   git clone https://github.com/nicolas-stein/EcoCity
   ```
  
@@ -32,7 +32,7 @@ To play at this game you will need some compilator like QT, or other.
 ```
 
 3. Execute the code
-    ```sh
+  ```sh
   ./executable
   ```
 
