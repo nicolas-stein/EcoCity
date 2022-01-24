@@ -12,6 +12,7 @@ BuildCursor::~BuildCursor()
 
 void BuildCursor::freeSquareBuildingToBuild()
 {
+	//Si les variables sont définies, on les libères de la mémoire
 	if(squareToBuild != nullptr){
 		delete squareToBuild;
 		squareToBuild = nullptr;
@@ -25,6 +26,7 @@ void BuildCursor::freeSquareBuildingToBuild()
 
 void BuildCursor::setSquareToBuild(GridSquare *newSquareToBuild)
 {
+	//On défini le carré qu'on veut construire
 	freeSquareBuildingToBuild();
 	squareToBuild = newSquareToBuild;
 	squareToBuild->getPixmapItem()->mainThreadConnected();
@@ -40,6 +42,7 @@ void BuildCursor::setSquareToBuild(GridSquare *newSquareToBuild)
 
 void BuildCursor::setBuildingToBuild(Building *building)
 {
+	//On défini le batiment qu'on veut construire
 	freeSquareBuildingToBuild();
 	buildingToBuild = building;
 	buildingToBuild->updatePixmap(false);
@@ -50,6 +53,8 @@ void BuildCursor::setBuildingToBuild(Building *building)
 
 void BuildCursor::setPosition(int x, int y)
 {
+	//Lorsque l'on déplace la souris sur la scène, le curseur suit la souris
+	//On met à jour les coordonnées du carré à construire (ou du batiment à construire)
 	if(squareToBuild != nullptr){
 		if(squareToBuild->getGridType()==Grid::Type::GridTerrain){
 			x -= x % TERRAIN_SQUARE_SIZE;
@@ -76,6 +81,7 @@ void BuildCursor::setPosition(int x, int y)
 				((RoadSquare*)squareToBuild)->updatePixmap(mapManager->getRoadGrid());
 				squareToBuild->getPixmapItem()->mainThreadConnected();
 				setPixmap(squareToBuild->getPixmapItem()->pixmap());
+				//Si on a le clique gauche d'enfoncé quand on a déplacé la souris, on demande la construction du carré
 				if(QApplication::mouseButtons() == Qt::LeftButton){
 					emit requestBuildSquare(squareToBuild);
 				}
@@ -83,6 +89,7 @@ void BuildCursor::setPosition(int x, int y)
 			else if(squareToBuild->getGridType()==Grid::Type::GridZone){
 				if(mapManager->getZoneGrid()[x/ZONE_SQUARE_SIZE][y/ZONE_SQUARE_SIZE] != nullptr){
 					setOpacity(1);
+					//Si on a le clique gauche d'enfoncé quand on a déplacé la souris, on demande le changement de type de zone
 					if(QApplication::mouseButtons() == Qt::LeftButton){
 						emit changeZoneSquareType((ZoneSquare*)squareToBuild, QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier));
 					}
@@ -118,20 +125,24 @@ void BuildCursor::setManagers(RessourceManager *ressourceManager, MapManager *ma
 
 void BuildCursor::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+	//Lorsque l'on clique avec le bouton gauche de la souris
 	if(event->button() == Qt::LeftButton){
 		if(squareToBuild!=nullptr){
 			if(squareToBuild->getGridType()==Grid::Type::GridRoad){
+				//On demande la construction du carré
 				emit requestBuildSquare(squareToBuild);
 				event->accept();
 				return;
 			}
 			else if(squareToBuild->getGridType()==Grid::Type::GridZone){
+				//On demande le changement de type de zone
 				emit changeZoneSquareType((ZoneSquare*)squareToBuild, QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier));
 				event->accept();
 				return;
 			}
 		}
 		else if(buildingToBuild != nullptr){
+			//On demande la construction du batiment
 			emit requestBuildBuilding(buildingToBuild);
 			event->accept();
 			return;

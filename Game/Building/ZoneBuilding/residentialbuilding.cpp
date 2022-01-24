@@ -15,22 +15,23 @@ ResidentialBuilding::ResidentialBuilding(int posX, int posY, int width, int heig
 	}
 }
 
-int ResidentialBuilding::getMaxResidents() const
-{
-	return maxResidents;
-}
-
 int ResidentialBuilding::getResidents() const
 {
 	return residents;
 }
 
-void ResidentialBuilding::addResidents(int newResidents)
+int ResidentialBuilding::getMaxResidents() const
 {
-	if(residents + newResidents <= maxResidents){
-		residents += newResidents;
+	return maxResidents;
+}
+
+void ResidentialBuilding::changeResidents(int amountResidents)
+{
+	if((amountResidents > 0 && residents + amountResidents <= maxResidents) || (amountResidents < 0 && residents >= amountResidents)){
+		residents += amountResidents;
 	}
-	powerConsumption = residents*20/1000;
+
+	powerConsumption = (double)residents*20/1000;
 }
 
 double ResidentialBuilding::getPollution() const

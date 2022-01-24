@@ -2,10 +2,10 @@
 
 AudioManager::AudioManager(QObject *parent): QThread {parent}
 {
-	moveToThread(this);
-	musicPlayer = new QMediaPlayer();
+	moveToThread(this);					//Tous les slots s'éxecuteront dans un thread séparé afin de pas ralentir le thread principal (gérant la partie graphique)
+	musicPlayer = new QMediaPlayer();	//On créer le lecteur de musique qu'on déplace dans le thread séparé
 	musicPlayer->moveToThread(this);
-	audioOutput = new QAudioOutput();
+	audioOutput = new QAudioOutput();	//On créer la sortie audio qu'on déplace dans le thread séparé
 	audioOutput->moveToThread(this);
 
 	musicPlayer->setAudioOutput(audioOutput);
@@ -19,6 +19,7 @@ AudioManager::AudioManager(QObject *parent): QThread {parent}
 
 AudioManager::~AudioManager()
 {
+	//On supprime tout les sons chargés et autres variables allouée dynamiquement
 	foreach(QSoundEffect *soundEffect, soundEffects){
 		delete soundEffect;
 	}
@@ -29,6 +30,7 @@ AudioManager::~AudioManager()
 
 void AudioManager::startMusic()
 {
+	//Si la musique n'est pas déjà en cours de lecture, on lit une musique au hasard dans la playlist
 	if(musicPlayer->playbackState() != QMediaPlayer::PlayingState){
 		musicIndex = QRandomGenerator::global()->generate() % musicPlaylist.size();
 		musicPlayer->setSource(musicPlaylist.at(musicIndex));
@@ -38,6 +40,7 @@ void AudioManager::startMusic()
 
 void AudioManager::playSoundEffect(SoundEffects soundEffect)
 {
+	//Si le son en question n'est pas déjà en cours de lecture, on le joue
 	if(!soundEffects.value(soundEffect)->isPlaying()){
 		soundEffects.value(soundEffect)->play();
 	}
@@ -93,6 +96,7 @@ void AudioManager::loadSoundEffects()
 
 void AudioManager::musicStatusChanged(QMediaPlayer::MediaStatus status)
 {
+	//Si la musique est terminée, on joue au hasard une autre musique
 	if(status == QMediaPlayer::EndOfMedia){
 		int currentIndex = musicIndex;
 		while(musicIndex == currentIndex){

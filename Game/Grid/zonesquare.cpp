@@ -2,16 +2,17 @@
 
 ZoneSquare::ZoneSquare(int posX, int posY, Grid::Zone::Type zoneType, RessourceManager *ressourceManager) : GridSquare(Grid::Type::GridZone, posX, posY, ZONE_SQUARE_SIZE, ZONE_SQUARE_SIZE, ressourceManager), zoneType(zoneType)
 {
-	pixmapItem.setCacheMode(QGraphicsItem::DeviceCoordinateCache);
-	pixmapItem.setPixmap(ressourceManager->getZonePixmaps()->value(zoneType));
-	pixmapItem.setPos(posX-ZONE_SQUARE_MARGIN/2, posY-ZONE_SQUARE_MARGIN/2);
-	pixmapItem.setZValue(20);
-	pixmapItem.setOpacity(0.6);
-	pixmapItem.setVisible(false);
+	pixmapItem.setCacheMode(QGraphicsItem::DeviceCoordinateCache);				//Cache de la texture afin d'améliorer les performances
+	pixmapItem.setPixmap(ressourceManager->getZonePixmaps()->value(zoneType));	//On défini la texture utilisée par la zone
+	pixmapItem.setPos(posX-ZONE_SQUARE_MARGIN/2, posY-ZONE_SQUARE_MARGIN/2);	//On défini la position du pixmapItem qui va être affiché sur la scène
+	pixmapItem.setZValue(20);													//Elevation du pixmap (1er plan, second plan, troisième plan, ...)
+	pixmapItem.setOpacity(0.6);													//Opacité du pixmap (0 = transparent, 1 = opaque)
+	pixmapItem.setVisible(false);												//On rend invisble le pixmap pour ne pas l'afficher sur la carte par défaut
 }
 
 void ZoneSquare::setZoneType(Grid::Zone::Type zoneType)
 {
+	//Quand on change le type de la zone, on met aussi à jour le pixmap
 	this->zoneType = zoneType;
 	pixmapItem.setPixmap(ressourceManager->getZonePixmaps()->value(zoneType));
 }
@@ -23,12 +24,12 @@ Grid::Zone::Type ZoneSquare::getZoneType() const
 
 int ZoneSquare::isZoneAdjacentToRoad(RoadSquare ***roadGrid)
 {
-	/* Returns :
-	 * Road on left : 4
-	 * Road on right : 6
-	 * Road on top : 8
-	 * Road on bottom : 2
-	 * No adjacent road : 0
+	/* Retourne :
+	 * Route à gauche : 4
+	 * Route à droite : 6
+	 * Route en haut : 8
+	 * Route en bas : 2
+	 * Pas de route adjactente : 0
 	 */
 	if(posX >= ROAD_SQUARE_SIZE && roadGrid[(posX-ZONE_SQUARE_SIZE)/ROAD_SQUARE_SIZE][posY/ROAD_SQUARE_SIZE] != nullptr){
 		return 4;
@@ -47,6 +48,12 @@ int ZoneSquare::isZoneAdjacentToRoad(RoadSquare ***roadGrid)
 
 bool ZoneSquare::isZoneValid(ZoneSquare ***zoneGrid, RoadSquare ***roadGrid)
 {
+	/* Vérifie sur la zone est valide :
+	 * Il faut que la zone soit collée à une route ou
+	 * qu'il y ai dans une direction, au plus trois autres zone du même type
+	 * avec la dernière collée à une route
+	 */
+
 	if(isZoneAdjacentToRoad(roadGrid)){
 		return true;
 	}

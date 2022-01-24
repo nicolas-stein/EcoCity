@@ -2,6 +2,7 @@
 
 CommercialBuilding::CommercialBuilding(int posX, int posY, int width, int height, RessourceManager *ressourceManager): ZoneBuilding(posX, posY, width, height, Grid::Zone::Type::Commercial, ressourceManager)
 {
+	//On défini le nombre de client, d'employés et la consommation énergétique en fonction de la taille du batiment
 	if(widthGrid() == 4 && heightGrid() == 4){
 		maxWorkers = 10;
 		maxClients = 30;

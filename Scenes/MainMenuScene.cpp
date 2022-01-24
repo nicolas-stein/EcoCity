@@ -2,15 +2,18 @@
 
 MainMenuScene::MainMenuScene(QObject *parent) : QGraphicsScene{parent}
 {
+	//On initialise la scène
 	setSceneRect(0, 0, 1280, 720);
 	setBackgroundBrush(QBrush(QColor(COLOR_MAIN_MENU_BG)));
 
+	//On ajoute le logo
 	QPixmap pixmap(":/pixmaps/main_menu/main_menu_logo");
 	pixmap = pixmap.scaled(400, 400);
 	titlePixmap.setPixmap(pixmap);
 	titlePixmap.setPos(width()/2 - pixmap.width()/2, 0);
 	addItem(&titlePixmap);
 
+	//On ajoute les boutons et les sliders qu'on positionne dans la scène
 	startButton.setText("Démarrer une partie");
 	quitButton.setText("Quitter");
 
@@ -63,6 +66,7 @@ MainMenuScene::MainMenuScene(QObject *parent) : QGraphicsScene{parent}
 	soundLogo.setPos(soundSliderItem->pos().x()-pixmap.width()-8, soundSliderItem->pos().y()-soundSlider.height()/2);
 	addItem(&soundLogo);
 
+	//On connecte les signaux aux slots
 	connect(&startButton, &QPushButton::clicked, this, &MainMenuScene::startButton_on_clicked);
 	connect(&quitButton, &QPushButton::clicked, this, &MainMenuScene::quitButton_on_clicked);
 
@@ -80,6 +84,7 @@ MainMenuScene::~MainMenuScene()
 
 void MainMenuScene::setSlidersValue(int valueMusicSlider, int valueSoundSlider)
 {
+	//On change la valeur des sliders
 	musicSlider.setValue(valueMusicSlider);
 	soundSlider.setValue(valueSoundSlider);
 }
@@ -96,6 +101,7 @@ void MainMenuScene::quitButton_on_clicked()
 
 void MainMenuScene::keyPressEvent(QKeyEvent *event)
 {
+	//Quand on appuie sur Escape on quitte le jeu
 	if(event->key() == Qt::Key::Key_Escape){
 		emit requestQuit();
 	}

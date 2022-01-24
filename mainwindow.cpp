@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
 {
+	//On configure la fêntre principale au lancement du jeu en masquant les élements inutiles de l'interface
 	ui->setupUi(this);
 	ui->tabWidget_main->setVisible(false);
 	ui->statusBar->setVisible(false);
@@ -12,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
 	statusBarLabel.setStyleSheet("font : 12pt;");
 	statusBarLabel.setText("<strong></strong>");
 
+	//On créer la scène du menu principal et on connecte les signaux
 	mainMenu_graphicsScene = new MainMenuScene(this);
 	connect(mainMenu_graphicsScene, &MainMenuScene::requestStart, this, &MainWindow::startGame);
 	connect(mainMenu_graphicsScene, &MainMenuScene::requestQuit, this, &MainWindow::quitApp);
@@ -21,10 +23,14 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->graphicsView->setScene(mainMenu_graphicsScene);
 	setAttribute(Qt::WA_AlwaysShowToolTips, true);
 
+	//On lance le thread du gestionnaire audio et on démarre la musique
 	audioManager.start();
 	audioManager.startMusic();
 
+	//On charge le fichier de configuration du programme
 	settings = new QSettings("config.ini", QSettings::IniFormat, this);
+
+	//On lit les valeurs enregistré pour les volumes qu'on met à jour et on met à jour les sliders du menu principal
 	audioManager.changeSoundEffectVolume(settings->value("Volume/SoundEffect", 50).toInt());
 	audioManager.changeMusicVolume(settings->value("Volume/Music", 25).toInt());
 
@@ -33,8 +39,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+	//On arrête le thread audio
 	audioManager.quit();
 	audioManager.wait(2000);
+
+	//On vide la mémoire
 	delete ui;
 	delete mainMenu_graphicsScene;
 	if(mainGame_graphicsScene!=nullptr){
@@ -57,24 +66,29 @@ void MainWindow::set_all_power_buttons_enabled(bool enabled)
 
 void MainWindow::startGame()
 {
+	//Si on est sur le menu principal et que la scène du jeu n'est pas créée, alors on la créer et on lance le jeu
 	if(ui->graphicsView->scene() == mainMenu_graphicsScene && mainGame_graphicsScene == nullptr){
+		//On affiche les éléments de l'interface
 		ui->tabWidget_main->setVisible(true);
 		ui->statusBar->setVisible(true);
 		ui->tabWidget_main->setCurrentIndex(0);
 		ui->tabWidget_construction->setCurrentIndex(0);
+
+		//On créé la scène et on connecte les signaux avec les slots
 		mainGame_graphicsScene = new MainGameScene(ui->graphicsView);
 		connect(mainGame_graphicsScene, SIGNAL(gameDateChanged(QDate)), this, SLOT(gameDateChanged(QDate)));
 		connect(mainGame_graphicsScene, SIGNAL(gameMoneyUpdated(double)), this, SLOT(gameMoneyUpdated(double)));
 		connect(mainGame_graphicsScene, SIGNAL(gameDemandsUpdated(double,int,double,double)), this, SLOT(gameDemandsUpdated(double,int,double,double)));
 		connect(mainGame_graphicsScene, SIGNAL(gamePowerUpdated(double,double)), this, SLOT(gamePowerUpdated(double,double)));
-		connect(mainGame_graphicsScene, SIGNAL(gamePollutionUpdated(int,int)), this, SLOT(gamePollutionUpdated(int,int)));
+		connect(mainGame_graphicsScene, SIGNAL(gamePollutionUpdated(int)), this, SLOT(gamePollutionUpdated(int)));
 		connect(mainGame_graphicsScene, SIGNAL(playSoundEffect(SoundEffects)), &audioManager, SLOT(playSoundEffect(SoundEffects)));
 		connect(mainGame_graphicsScene, SIGNAL(changeStatusBarMessage(QString)), this, SLOT(changeStatusBarMessage(QString)));
 
+		//On défini la nouvelle scène de la vue avec ses caractéristiques
 		ui->graphicsView->setScene(mainGame_graphicsScene);
 		ui->graphicsView->setPanEnable(true);
 		ui->graphicsView->setZoomEnbale(true);
-		ui->graphicsView->fitInView(mainGame_graphicsScene->width()/4, mainGame_graphicsScene->height()/4, mainGame_graphicsScene->width()/2, mainGame_graphicsScene->height()/2, Qt::KeepAspectRatio);
+		//ui->graphicsView->fitInView(mainGame_graphicsScene->width()/4, mainGame_graphicsScene->height()/4, mainGame_graphicsScene->width()/2, mainGame_graphicsScene->height()/2, Qt::KeepAspectRatio);
 		mainGame_graphicsScene->startGameLogic();
 
 		ui->graphicsView->fitInView(0, 0, mainGame_graphicsScene->width()/2, mainGame_graphicsScene->height()/2, Qt::KeepAspectRatioByExpanding);
@@ -83,11 +97,13 @@ void MainWindow::startGame()
 
 
 void MainWindow::quitApp(){
+	//On quitte le programme
 	qApp->quit();
 }
 
 void MainWindow::on_button_place_road_1_clicked(bool checked)
 {
+	//On active le mode construction et on désactive les autres boutons
 	if(checked){
 		ui->button_place_road_2->setEnabled(false);
 		ui->button_place_road_3->setEnabled(false);
@@ -151,6 +167,7 @@ void MainWindow::on_button_place_road_3_clicked(bool checked)
 
 void MainWindow::on_button_remove_road_clicked(bool checked)
 {
+	//On active le mode destruction et on désactive les autres boutons
 	if(checked){
 		ui->button_place_road_1->setEnabled(false);
 		ui->button_place_road_2->setEnabled(false);
@@ -171,6 +188,7 @@ void MainWindow::on_button_remove_road_clicked(bool checked)
 
 void MainWindow::on_button_place_zone_1_clicked(bool checked)
 {
+	//On active le mode construction et on désactive les autres boutons
 	if(checked){
 		ui->button_place_zone_2->setEnabled(false);
 		ui->button_place_zone_3->setEnabled(false);
@@ -234,6 +252,7 @@ void MainWindow::on_button_place_zone_3_clicked(bool checked)
 
 void MainWindow::on_button_remove_zone_clicked(bool checked)
 {
+	//On active le mode destruction et on désactive les autres boutons
 	if(checked){
 		ui->button_place_zone_1->setEnabled(false);
 		ui->button_place_zone_2->setEnabled(false);
@@ -254,6 +273,7 @@ void MainWindow::on_button_remove_zone_clicked(bool checked)
 
 void MainWindow::on_button_place_power_1_clicked(bool checked)
 {
+	//On active le mode construction et on désactive les autres boutons
 	if(checked){
 		set_all_power_buttons_enabled(false);
 		ui->button_place_power_1->setEnabled(true);
@@ -391,6 +411,7 @@ void MainWindow::on_button_remove_power_clicked(bool checked)
 
 void MainWindow::on_tabWidget_construction_currentChanged(int index)
 {
+	//Si on est dans l'onglet construction puis zones, on affiche les zones
 	if(mainGame_graphicsScene!=nullptr){
 		mainGame_graphicsScene->showZones(index==1);
 	}
@@ -403,6 +424,7 @@ void MainWindow::on_tabWidget_main_currentChanged(int index)
 		return;
 	}
 
+	//Si un bouton était appuyé quand on revient dans l'onglet informations, on clique le "désappuie", on affiche le message dans la barre d'état et on enlève la pause
 	if(index == 0){
 		changeStatusBarMessage(statusBarMessage);
 		mainGame_graphicsScene->setGameSpeed(gameSpeed);
@@ -478,6 +500,7 @@ void MainWindow::on_tabWidget_main_currentChanged(int index)
 		}
 	}
 	else if(index == 1){
+		//Si on est dans l'onglet construction on met le jeu en pause et on affiche un message dans la barre d'état
 		changeStatusBarMessage("<strong><font color=red>Mode construction : jeu en pause</font></strong>");
 		mainGame_graphicsScene->setGameSpeed(0);
 	}
@@ -489,6 +512,7 @@ void MainWindow::on_tabWidget_main_currentChanged(int index)
 
 void MainWindow::gameDateChanged(QDate newDate)
 {
+	//On affiche la nouvelle date
 	ui->progressBar_date->setMaximum(newDate.daysInMonth());
 	ui->progressBar_date->setValue(newDate.day());
 	ui->progressBar_date->setFormat(newDate.toString("MMM yyyy"));
@@ -496,6 +520,7 @@ void MainWindow::gameDateChanged(QDate newDate)
 
 void MainWindow::gameDemandsUpdated(double residential, int residents, double commercial, double industrial)
 {
+	//On affiche les nouvelles demandes
 	ui->progressBar_residential->setValue(residential);
 	ui->progressBar_commercial->setValue(commercial);
 	ui->progressBar_industrial->setValue(industrial);
@@ -521,6 +546,7 @@ void MainWindow::gameDemandsUpdated(double residential, int residents, double co
 
 void MainWindow::gamePowerUpdated(double powerProduction, double powerConsumption)
 {
+	//On affiche les nouvelles statistiques d'électricité
 	ui->label_electrical_production->setText("Production : "+QString::number(powerProduction, 'f', 2)+" MW");
 	ui->label_electrical_consumption->setText("Consommation : "+QString::number(powerConsumption, 'f', 2)+" MW");
 	if(powerProduction == 0){
@@ -532,6 +558,7 @@ void MainWindow::gamePowerUpdated(double powerProduction, double powerConsumptio
 
 void MainWindow::gameMoneyUpdated(double money)
 {
+	//On affiche l'argent et sa variation
 	int divider;
 	QString suffix;
 	if(abs(money) >= 1e9){
@@ -589,18 +616,30 @@ void MainWindow::gameMoneyUpdated(double money)
 	ui->label_money->setText("Argent : "+QString::number(money/divider, 'f', 2)+suffix);
 }
 
-void MainWindow::gamePollutionUpdated(int pollution, int maxPollution)
+void MainWindow::gamePollutionUpdated(int pollution)
 {
-	if(maxPollution == 0){
-		maxPollution = 1;
-	}
+	//On affiche les nouvelles statistiques de pollution
 
-	QColor color(pollution*255/maxPollution, (maxPollution-pollution)*255/maxPollution, 0, 255);
-	ui->progressBar_pollution_emissions->setStyleSheet("QProgressBar::chunk{background-color: "+color.name()+"}");
-	ui->progressBar_pollution_emissions->setMaximum(maxPollution);
-	ui->progressBar_pollution_emissions->setValue(pollution);
 	ui->label_pollution_emissions->setText("Emissions : "+QString::number(pollution));
-	ui->label_pollution_emissions_per_hab->setText("Emissions par hab. : "+QString::number((double)pollution/(double)residents, 'f', 2));
+	if(residents > 0){
+		ui->label_pollution_emissions_per_hab->setText("Emissions par hab. : "+QString::number((double)pollution/(double)residents, 'f', 2));
+
+		//On défini le maximum de pollution comme étant la population x 15 (pour la barre de chargement représentant la pollution)
+		int maxPollution = residents*15;
+		if(pollution > maxPollution){
+			pollution = maxPollution;
+		}
+
+		QColor color(pollution*255/maxPollution, (maxPollution-pollution)*255/maxPollution, 0, 255);
+		ui->progressBar_pollution_emissions->setStyleSheet("QProgressBar::chunk{background-color: "+color.name()+"}");
+		ui->progressBar_pollution_emissions->setMaximum(maxPollution);
+		ui->progressBar_pollution_emissions->setValue(pollution);
+	}
+	else{
+		ui->label_pollution_emissions_per_hab->setText("Emissions par hab. : 0.00");
+		ui->progressBar_pollution_emissions->setMaximum(1);
+		ui->progressBar_pollution_emissions->setValue(0);
+	}
 }
 
 void MainWindow::changeStatusBarMessage(QString newMessage)

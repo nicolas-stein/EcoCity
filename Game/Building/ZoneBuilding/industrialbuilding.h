@@ -3,8 +3,7 @@
 
 #include "zonebuilding.h"
 
-#include <QRandomGenerator>
-
+//Classe représentant un batiment industriel
 class IndustrialBuilding : public ZoneBuilding
 {
 public:

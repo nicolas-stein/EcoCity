@@ -49,6 +49,8 @@ QMap<Grid::Zone::Type, QList<QPixmap> > *RessourceManager::getZoneBuildingPixmap
 
 QPixmap RessourceManager::getZoneBuildingPixmap(Grid::Zone::Type zoneType, int widthGrid, int heightGrid, unsigned randomPixmapNumber)
 {
+	//On retourne la bonne texture en fonction de la taille du batiment
+	//Si un batiment a plusieurs textures pour la même taille, on utilise le nombre aléatoire pour lui donner une des textures
 	if(zoneType == Grid::Zone::Residential){
 		if(widthGrid == 4 && heightGrid == 4){
 			return residentialPixmaps.value(0);

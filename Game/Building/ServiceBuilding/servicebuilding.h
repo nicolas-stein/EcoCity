@@ -5,6 +5,7 @@
 #include "../building.h"
 #include "Game/Grid/roadsquare.h"
 
+//Classe représentant un batiement "de service" (qui a une utilité fonctionnelle pour la ville)
 class ServiceBuilding : public Building
 {
 public:
@@ -16,13 +17,12 @@ public:
 
 	bool isConnectedToRoad() const;
 
-	virtual double getCost() const = 0;
-	virtual double getOperationalCost() const = 0;
+	virtual double getCost() const = 0;				//Cout de construction
+	virtual double getOperationalCost() const = 0;	//Cout de maintenance (chaque mois)
 
 private:
-	Buildings::Service::Type serviceType;
+	Buildings::Service::Type serviceType;			//Type de batiment de service
 protected :
-	int cost = 0;
 	bool connectedToRoad = false;
 };
 

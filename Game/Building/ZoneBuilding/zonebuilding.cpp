@@ -6,6 +6,12 @@ ZoneBuilding::ZoneBuilding(int posX, int posY, int width, int height, Grid::Zone
 	randomPixmapNumber = QRandomGenerator::global()->generate();
 }
 
+Grid::Zone::Type ZoneBuilding::getZoneType() const
+{
+	return zoneType;
+}
+
+
 void ZoneBuilding::addCoveringZone(ZoneSquare *zoneSquare)
 {
 	coveringZones.append(zoneSquare);
@@ -16,29 +22,10 @@ const QList<ZoneSquare *> &ZoneBuilding::getCoveringZones() const
 	return coveringZones;
 }
 
-Grid::Zone::Type ZoneBuilding::getZoneType() const
-{
-	return zoneType;
-}
-
-int ZoneBuilding::widthGrid()
-{
-	return width/ZONE_SQUARE_SIZE;
-
-}
-
-int ZoneBuilding::heightGrid()
-{
-	return height/ZONE_SQUARE_SIZE;
-}
-
-double ZoneBuilding::getPowerConsumption() const
-{
-	return powerConsumption;
-}
-
+//Mise à jour de la texture du batiment
 void ZoneBuilding::updatePixmap(bool showToolTips)
 {
+	//Si le batiment n'est pas connecté à l'électricité , on affiche une info-bulle avec un logo d'éclaire barré sur la texture de base du batiment
 	if(showToolTips && !connectedToPower){
 		QPixmap pixmap = ressourceManager->getZoneBuildingPixmap(zoneType, widthGrid(), heightGrid(), randomPixmapNumber);
 		QPixmap tooltip = ressourceManager->getTooltipsPixmaps()->value(NoPower);
@@ -54,19 +41,32 @@ void ZoneBuilding::updatePixmap(bool showToolTips)
 		}
 		pixmapItem.setPixmap(pixmap);
 	}
-	else{
+	else{	//Sinon on affiche la texture de base du batiment
 		pixmapItem.setPixmap(ressourceManager->getZoneBuildingPixmap(zoneType, widthGrid(), heightGrid(), randomPixmapNumber));
 	}
 }
 
+double ZoneBuilding::getPowerConsumption() const
+{
+	return powerConsumption;
+}
+
 void ZoneBuilding::setConnectedToPower(bool isConnectedToPower)
 {
+	//Si on a changé d'état, on met à jour la texture du batiment
 	if(isConnectedToPower != connectedToPower){
 		connectedToPower = isConnectedToPower;
 		updatePixmap(true);
 	}
-	else{
-		connectedToPower = isConnectedToPower;
-	}
 }
 
+int ZoneBuilding::widthGrid()
+{
+	return width/ZONE_SQUARE_SIZE;
+
+}
+
+int ZoneBuilding::heightGrid()
+{
+	return height/ZONE_SQUARE_SIZE;
+}

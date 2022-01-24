@@ -3,14 +3,15 @@
 
 #include "zonebuilding.h"
 
+//Classe représentant un batiment résidentiel
 class ResidentialBuilding : public ZoneBuilding
 {
 public:
 	ResidentialBuilding(int posX, int posY, int width, int height, RessourceManager *ressourceManager);
-	int getMaxResidents() const;
 
 	int getResidents() const;
-	void addResidents(int newResidents);
+	int getMaxResidents() const;
+	void changeResidents(int amountResidents);
 
 	double getPollution() const;
 

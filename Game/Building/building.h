@@ -7,6 +7,7 @@
 
 #include <QPainter>
 
+//Classe représentant un batiment
 class Building
 {
 public:
@@ -27,17 +28,17 @@ public:
 	virtual void updatePixmap(bool showToolTips) = 0;
 	virtual double getPollution() const = 0;
 private :
-	int posX;
-	int posY;
-	Buildings::Type buildingType;
+	int posX;						//Coordonnée X du batiment
+	int posY;						//Coordonnée Y du batiment
+	Buildings::Type buildingType;	//Type de batiment (Zone ou Service)
 
 
 protected :
-	RessourceManager *ressourceManager;
-	CustomGraphicsPixmapItem pixmapItem;
-	int width;
-	int height;
-	bool connectedToPower = false;
+	RessourceManager *ressourceManager;		//Gestionnaire de ressource (utilisé pour charger la texture du batiment)
+	CustomGraphicsPixmapItem pixmapItem;	//GraphicsPixmapItem associé au batiment (va être affiche sur la scène du jeu)
+	int width;								//Largeur du batiment
+	int height;								//Hauteur du batiment
+	bool connectedToPower = false;			//Alimenté en électricité
 };
 
 #endif // BUILDING_H

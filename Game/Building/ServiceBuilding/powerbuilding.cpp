@@ -2,6 +2,7 @@
 
 PowerBuilding::PowerBuilding(int posX, int posY, RessourceManager *ressourceManager, Buildings::Service::PowerType powerType): ServiceBuilding(posX, posY, Buildings::Service::Type::Power, ressourceManager), powerType(powerType)
 {
+	//On défini la taille du batiment en fonction de son type (chaque type a une taille prédéfinie)
 	switch(powerType){
 	case Buildings::Service::Coal:
 		width = ZONE_SQUARE_SIZE*12;
@@ -41,7 +42,10 @@ PowerBuilding::PowerBuilding(int posX, int posY, RessourceManager *ressourceMana
 
 	}
 
+	//Les batiments électrique sont toujours connectés à l'électricité
 	connectedToPower = true;
+
+	currentPowerProduction = basePowerProduction;
 }
 
 Buildings::Service::PowerType PowerBuilding::getPowerType() const
@@ -49,8 +53,10 @@ Buildings::Service::PowerType PowerBuilding::getPowerType() const
 	return powerType;
 }
 
+//Mise à jour de la texture du batiment
 void PowerBuilding::updatePixmap(bool showToolTips)
 {
+	//Si le batiment n'est pas connecté à la route, on affiche une info-bulle avec un logo de route barré sur la texture de base du batiment
 	if(!connectedToRoad && showToolTips){
 		QPixmap pixmap = ressourceManager->getPowerBuildingPixmaps()->value(powerType);
 		QPixmap tooltip = ressourceManager->getTooltipsPixmaps()->value(NoRoad);
@@ -58,17 +64,19 @@ void PowerBuilding::updatePixmap(bool showToolTips)
 		painter.drawPixmap(pixmap.width()/2-tooltip.width()/2, pixmap.height()/2-tooltip.height()/2, tooltip);
 		pixmapItem.setPixmap(pixmap);
 	}
-	else{
+	else{	//Sinon on affiche la texture de base du batiment
 		pixmapItem.setPixmap(ressourceManager->getPowerBuildingPixmaps()->value(powerType));
 	}
 }
 
 double PowerBuilding::getPollution() const
 {
+	//Le batiment ne pollue pas s'il n'est pas en fonctionnement (connecté à la route)
 	if(!connectedToRoad){
 		return 0;
 	}
 
+	//Les batiments on des pollutions différentes en fonction de leur type
 	switch(powerType){
 	case Buildings::Service::Coal:
 		return 8200;
@@ -97,13 +105,12 @@ double PowerBuilding::getPollution() const
 
 double PowerBuilding::getCurrentPowerProduction()
 {
+	//Si le batiment n'est pas connecté à la route il ne fonctionne pas => pas de production d'énergie
 	if(!connectedToRoad){
 		return 0;
 	}
-	else if(currentPowerProduction == 0){
-		currentPowerProduction = basePowerProduction;
-	}
 	else if(powerType == Buildings::Service::SmallSolar || powerType == Buildings::Service::BigSolar || powerType == Buildings::Service::Wind){
+		//Si c'est une station solaire ou une éolienne, la production varie par rapport à la dernière fois
 		currentPowerProduction = currentPowerProduction + basePowerProduction * ((double)(QRandomGenerator::global()->generate() % 5) - 2) / 100;
 		if(currentPowerProduction > basePowerProduction){
 			currentPowerProduction = basePowerProduction;
@@ -118,6 +125,7 @@ double PowerBuilding::getCurrentPowerProduction()
 
 double PowerBuilding::getCost() const
 {
+	//Les batiments ont un différent cout de construction en fonction de leur type
 	switch(powerType){
 	case Buildings::Service::Coal:
 		return 100e3;
@@ -148,6 +156,7 @@ double PowerBuilding::getCost() const
 
 double PowerBuilding::getOperationalCost() const
 {
+	//Les batiments ont un différent cout de maintenance en fonction de leur type
 	switch(powerType){
 	case Buildings::Service::Coal:
 		return 4e3;

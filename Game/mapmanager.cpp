@@ -53,6 +53,7 @@ MapManager::~MapManager()
 
 void MapManager::initMap(RessourceManager *ressourceManager)
 {
+	//On utilise un générateur de bruit "PerlinNoise" pour générer la carte de manière aléatoire
 	this->ressourceManager = ressourceManager;
 	const siv::PerlinNoise::seed_type seed = QRandomGenerator::global()->generate();
 	const siv::PerlinNoise perlin{seed};
@@ -89,15 +90,20 @@ void MapManager::initMap(RessourceManager *ressourceManager)
 
 GridSquare* MapManager::requestBuildSquare(GridSquare *square, double money)
 {
+	//Si on veut construire un carré de route
 	if(square->getGridType()==Grid::Type::GridRoad){
 		RoadSquare *roadSquare = (RoadSquare*)square;
+		//Si on a pas assez d'argent on ne peut pas construire le carrée
 		if(money < roadSquare->getCost()){
 			return nullptr;
 		}
 
+		//On vérifie qu'on peut construire le carré (qu'il n'y a pas déjà une route à cette endroit ou un batiment de service)
 		if(roadGrid[roadSquare->getPosX()/ROAD_SQUARE_SIZE][roadSquare->getPosY()/ROAD_SQUARE_SIZE] == nullptr && !isThereServiceBuilding(roadSquare->getPosX(), roadSquare->getPosY())){
+			//On vérifie que le terrain est propice à la construction d'une route (que ce n'est pas une montagne ou de l'eau)
 			if(terrainGrid[roadSquare->getPosX()/TERRAIN_SQUARE_SIZE][roadSquare->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Grid::Terrain::Type::Grass || terrainGrid[roadSquare->getPosX()/TERRAIN_SQUARE_SIZE][roadSquare->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Grid::Terrain::Type::Sand ||terrainGrid[roadSquare->getPosX()/TERRAIN_SQUARE_SIZE][roadSquare->getPosY()/TERRAIN_SQUARE_SIZE]->getTerrainType() == Grid::Terrain::Type::Rock){
 
+				//On créé le carré de route et on met à jour les routes adjacentes, on créé les zones le long de la route
 				RoadSquare *newSquare = new RoadSquare(roadSquare->getPosX(), roadSquare->getPosY(), roadSquare->getRoadType(), ressourceManager);
 				int x = newSquare->getPosX()/ROAD_SQUARE_SIZE;
 				int y = newSquare->getPosY()/ROAD_SQUARE_SIZE;
@@ -109,6 +115,7 @@ GridSquare* MapManager::requestBuildSquare(GridSquare *square, double money)
 
 				int zoneX, zoneY;
 
+				//Si on a construit la route sur des zones, on les effaces
 				for(int i=0;i<ROAD_SQUARE_SIZE/ZONE_SQUARE_SIZE;i++){
 					for(int j=0;j<ROAD_SQUARE_SIZE/ZONE_SQUARE_SIZE;j++){
 						zoneX = (newSquare->getPosX() + i*ZONE_SQUARE_SIZE)/ZONE_SQUARE_SIZE;
@@ -132,15 +139,19 @@ GridSquare* MapManager::requestBuildSquare(GridSquare *square, double money)
 
 Building *MapManager::requestBuildBuilding(Building *building, double money)
 {
+	//Si on veut construire un batiment de service
 	if(building->getBuildingType() == Buildings::Type::BuildingService){
 		ServiceBuilding *serviceBuilding = (ServiceBuilding*) building;
+		//On vérifie qu'on a assez d'argent et qu'on peut bel et bien construire le batiment voulu
 		if(money >= serviceBuilding->getCost() && canPutServiceBuilding(serviceBuilding)){
+			//On créé le batiment
 			ServiceBuilding* newBuilding = nullptr;
 			if(serviceBuilding->getServiceType() == Buildings::Service::Type::Power){
 				newBuilding = new PowerBuilding(serviceBuilding->getPosX(), serviceBuilding->getPosY(), ressourceManager, ((PowerBuilding*)serviceBuilding)->getPowerType());
 				serviceBuildings.append(newBuilding);
 			}
 
+			//Si le batiment a été construit sur un endroit où il y avait des zones => on change le type de ces zones en None pour éviter que des batiments de zone se constuise sur notre batiment de service
 			for(int i = serviceBuilding->getPosX()/ZONE_SQUARE_SIZE; i < (serviceBuilding->getPosX()+serviceBuilding->getWidth())/ZONE_SQUARE_SIZE; i++){
 				for(int j = serviceBuilding->getPosY()/ZONE_SQUARE_SIZE; j < (serviceBuilding->getPosY()+serviceBuilding->getHeight())/ZONE_SQUARE_SIZE; j++){
 					if(zoneGrid[i][j] != nullptr && zoneGrid[i][j]->getZoneType() != Grid::Zone::Type::None){
@@ -167,16 +178,20 @@ Building *MapManager::requestBuildBuilding(Building *building, double money)
 
 void MapManager::removeZoneSquare(int zoneX, int zoneY)
 {
+	//Quand on supprime une zone, on détruit le batiment qui était dessus s'il y en avait un
 	emit zoneSquareRemoved(zoneGrid[zoneX][zoneY]);
 	if(zoneGrid[zoneX][zoneY]->getBuilding()!=nullptr){
 		requestDestroyBuilding(zoneGrid[zoneX][zoneY]->getBuilding());
 	}
+
+	//On libère la mémoire
 	delete zoneGrid[zoneX][zoneY];
 	zoneGrid[zoneX][zoneY] = nullptr;
 }
 
 void MapManager::updateAdjacentRoadPixmaps(int x, int y, int recursive)
 {
+	//On met à jour les pixmap des routes adjacentes (fonction récursive)
 	if(x>0 && roadGrid[x-1][y]!=nullptr){
 		if(recursive > 0){
 			updateAdjacentRoadPixmaps(x-1, y, recursive-1);
@@ -209,7 +224,9 @@ void MapManager::updateAdjacentRoadPixmaps(int x, int y, int recursive)
 
 void MapManager::updateAdjacentRoadZones(RoadSquare *roadSquare)
 {
+	//Mise à jour des zones adjacentes à la route (créé les zones lorsque l'on place une route)
 	int zoneX, zoneY;
+	//Si la route n'est pas connecté en bas, on créé les zones en bas
 	if(!roadSquare->isConnectedBottom() && roadSquare->getPosY() < ROAD_GRID_SIZE*ROAD_SQUARE_SIZE){
 		for(int i=0;i<ROAD_SQUARE_SIZE/ZONE_SQUARE_SIZE;i++){
 			for(int j=0;j<ROAD_ZONE_RANGE;j++){
@@ -229,6 +246,7 @@ void MapManager::updateAdjacentRoadZones(RoadSquare *roadSquare)
 			}
 		}
 	}
+	//Si la route n'est pas connecté en haut, on créé les zones en haut
 	if(!roadSquare->isConnectedTop() && roadSquare->getPosY() > 0){
 		for(int i=0;i<ROAD_SQUARE_SIZE/ZONE_SQUARE_SIZE;i++){
 			for(int j=0;j<ROAD_ZONE_RANGE;j++){
@@ -248,6 +266,7 @@ void MapManager::updateAdjacentRoadZones(RoadSquare *roadSquare)
 			}
 		}
 	}
+	//Si la route n'est pas connecté à gauche, on créé les zones à gauche
 	if(!roadSquare->isConnectedLeft() && roadSquare->getPosX() > 0 ){
 		for(int i=0;i<ROAD_SQUARE_SIZE/ZONE_SQUARE_SIZE;i++){
 			for(int j=0;j<ROAD_ZONE_RANGE;j++){
@@ -267,6 +286,7 @@ void MapManager::updateAdjacentRoadZones(RoadSquare *roadSquare)
 			}
 		}
 	}
+	//Si la route n'est pas connecté à droite, on créé les zones à droite
 	if(!roadSquare->isConnectedRight() && roadSquare->getPosY() < ROAD_GRID_SIZE*ROAD_SQUARE_SIZE){
 		for(int i=0;i<ROAD_SQUARE_SIZE/ZONE_SQUARE_SIZE;i++){
 			for(int j=0;j<ROAD_ZONE_RANGE;j++){
@@ -290,10 +310,13 @@ void MapManager::updateAdjacentRoadZones(RoadSquare *roadSquare)
 
 void MapManager::requestDestroyRoad(RoadSquare *roadSquare)
 {
+	//Si on veut détruire une route
 	roadGrid[roadSquare->getPosX()/ROAD_SQUARE_SIZE][roadSquare->getPosY()/ROAD_SQUARE_SIZE] = nullptr;
 	roadCount--;
+	//On met à jour le pixmap des routes adjacentes
 	updateAdjacentRoadPixmaps(roadSquare->getPosX()/ROAD_SQUARE_SIZE, roadSquare->getPosY()/ROAD_SQUARE_SIZE, 1);
 
+	//On supprime les zones de la route
 	int zoneX, zoneY;
 	if(!roadSquare->isConnectedBottom() && roadSquare->getPosY() < ROAD_GRID_SIZE*ROAD_SQUARE_SIZE){
 		for(int i=0;i<ROAD_SQUARE_SIZE/ZONE_SQUARE_SIZE;i++){
@@ -351,6 +374,8 @@ void MapManager::requestDestroyRoad(RoadSquare *roadSquare)
 
 bool MapManager::generateNewZoneBuilding(Grid::Zone::Type zoneType)
 {
+	//On souhaite rajouter un batiment de zone à la carte
+	//On regarde où on pourrait le mettre (en fonction de la taille qu'il pourrait prendre)
 	for(int x=0;x<ZONE_GRID_SIZE;x++){
 		for(int y=0;y<ZONE_GRID_SIZE;y++){
 			if(zoneGrid[x][y] == nullptr || zoneGrid[x][y]->getZoneType()==Grid::Zone::Type::None || zoneGrid[x][y]->getBuilding() != nullptr){
@@ -378,8 +403,10 @@ bool MapManager::generateNewZoneBuilding(Grid::Zone::Type zoneType)
 
 bool MapManager::putZoneBuilding(int x, int y, int widthGrid, int heightGrid, Grid::Zone::Type zoneType)
 {
+	//On essaie de mettre un batiment de zone à ces coordonnées
 	bool anyAdjacentToRoad = false;
 	if(x < 0 || y < 0 || x+widthGrid >= ZONE_GRID_SIZE || y+heightGrid >= ZONE_GRID_SIZE){
+		//Si on sort de la carte
 		return false;
 	}
 
@@ -397,6 +424,7 @@ bool MapManager::putZoneBuilding(int x, int y, int widthGrid, int heightGrid, Gr
 		return false;
 	}
 
+	//Si il y a assez de zones libres pour mettre le batiment et qu'au moins une des zones est adjacente à une route alors on peut créer le batiment
 	ZoneBuilding *newBuilding;
 	if(zoneType==Grid::Zone::Type::Residential){
 		newBuilding = new ResidentialBuilding(zoneGrid[x][y]->getPosX(), zoneGrid[x][y]->getPosY(), ZONE_SQUARE_SIZE*widthGrid, ZONE_SQUARE_SIZE*heightGrid, ressourceManager);
@@ -421,6 +449,7 @@ bool MapManager::putZoneBuilding(int x, int y, int widthGrid, int heightGrid, Gr
 
 bool MapManager::canPutServiceBuilding(ServiceBuilding *building)
 {
+	//On vérifie si on peut poser le batiment de service
 	int x = building->getPosX();
 	int y = building->getPosY();
 	int width = building->getWidth();
@@ -430,7 +459,7 @@ bool MapManager::canPutServiceBuilding(ServiceBuilding *building)
 		return false;
 	}
 
-	//Vérification du terrain
+	//Vérification du terrain (on ne peut pas poser le batiment si il y a de l'eau ou une montagne)
 	for(int i=x/TERRAIN_SQUARE_SIZE; i < (x+width)/TERRAIN_SQUARE_SIZE; i++){
 		for(int j=y/TERRAIN_SQUARE_SIZE; j < (y+height)/TERRAIN_SQUARE_SIZE ; j++){
 			if(terrainGrid[i][j]->getTerrainType() == Grid::Terrain::Type::Water || terrainGrid[i][j]->getTerrainType() == Grid::Terrain::Type::Mountain){
@@ -439,7 +468,7 @@ bool MapManager::canPutServiceBuilding(ServiceBuilding *building)
 		}
 	}
 	
-	//Vérification des routes
+	//Vérification des routes (on ne peut pas poser le batiment sur une route)
 	for(int i = x/ROAD_SQUARE_SIZE ; i < (x+width)/ROAD_SQUARE_SIZE ; i++){
 		for(int j = y/ROAD_SQUARE_SIZE; j < (y+height)/ROAD_SQUARE_SIZE; j++){
 			if(roadGrid[i][j] != nullptr){
@@ -448,7 +477,7 @@ bool MapManager::canPutServiceBuilding(ServiceBuilding *building)
 		}
 	}
 
-	//Vérification des autres buildings
+	//Vérification des autres buildings (on ne peut pas poser le batiment de service sur d'autres batiments de service)
 	for(int i=0;i<serviceBuildings.size();i++){
 		if(x >= serviceBuildings.at(i)->getPosX() && x < serviceBuildings.at(i)->getPosX() + serviceBuildings.at(i)->getWidth()
 				&& y >= serviceBuildings.at(i)->getPosY() && y < serviceBuildings.at(i)->getPosY() + serviceBuildings.at(i)->getHeight()){
@@ -473,6 +502,7 @@ bool MapManager::canPutServiceBuilding(ServiceBuilding *building)
 
 bool MapManager::isThereServiceBuilding(int x, int y)
 {
+	//On parcourt la liste des batiments de service pour vérifier si il y en a un qui serait présent aux coordonnées
 	for(int i=0;i<serviceBuildings.size();i++){
 		if(x >= serviceBuildings.at(i)->getPosX() && x < serviceBuildings.at(i)->getPosX() + serviceBuildings.at(i)->getWidth()
 				&& y >= serviceBuildings.at(i)->getPosY() && y < serviceBuildings.at(i)->getPosY() + serviceBuildings.at(i)->getHeight()){
@@ -485,6 +515,8 @@ bool MapManager::isThereServiceBuilding(int x, int y)
 
 void MapManager::requestDestroyBuilding(Building *building)
 {
+	//On demande à détruire un batiment
+	//Si c'est un batiment de zone il faut mettre à jour toutes ses zones pour leur dire qu'elles n'ont plus de batiment
 	if(building->getBuildingType() == Buildings::Type::BuildingZone){
 		ZoneBuilding *zoneBuilding = (ZoneBuilding*) building;
 		for(int i=0;i<zoneBuilding->getCoveringZones().count();i++){
@@ -493,6 +525,7 @@ void MapManager::requestDestroyBuilding(Building *building)
 		zoneBuildings.removeAll(building);
 	}
 	else if(building->getBuildingType() == Buildings::Type::BuildingService){
+		//Si c'est un batiment de service, on l'enlève simplement de la liste
 		serviceBuildings.removeAll(building);
 	}
 
@@ -511,6 +544,7 @@ QList<ServiceBuilding *> MapManager::getServiceBuildings()
 
 Building *MapManager::getBuildingFromPos(int posX, int posY)
 {
+	//On parcourt la liste des batiments de zone et des batiments de service pour chercher si il y a un batiment aux coordonnées
 	Building *currentBuilding;
 	for(int i=0;i<zoneBuildings.size();i++){
 		currentBuilding = zoneBuildings.at(i);

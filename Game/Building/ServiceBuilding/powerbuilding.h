@@ -4,6 +4,7 @@
 #include "servicebuilding.h"
 #include <QPainter>
 
+//Classe représentant un batiment produisant de l'électricité
 class PowerBuilding : public ServiceBuilding
 {
 public:
@@ -14,16 +15,16 @@ public:
 
 	double getPollution() const;
 
-	double getCost() const;
-	double getOperationalCost() const;
+	double getCost() const;				//Cout de construction
+	double getOperationalCost() const;	//Cout de maintenance (chaque mois)
 
 	double getBasePowerProduction() const;
 	double getCurrentPowerProduction();
 
 private :
-	Buildings::Service::PowerType powerType;
-	double basePowerProduction;
-	double currentPowerProduction = 0;
+	Buildings::Service::PowerType powerType;	//Type de batiment électrique
+	double basePowerProduction;					//Production d'énergie de base
+	double currentPowerProduction = 0;			//Production d'énergie actuellement
 };
 
 #endif // POWERBUILDING_H

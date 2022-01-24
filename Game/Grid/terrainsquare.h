@@ -3,6 +3,7 @@
 
 #include "gridsquare.h"
 
+//Classe représentant un carré de terrain
 class TerrainSquare : public GridSquare
 {
 public:
