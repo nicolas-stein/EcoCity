@@ -14,7 +14,7 @@ Nous avons  beaucoup travaillé sur ce jeu alors nous espérons que vous l'appr�
 
 ## Compilation
 
-**Dans le cas où vous n'arriveriez pas à compiler le jeu, vous pouvez télécharger une version déjà compilée pour Linux ou Windows ~~ici~~ (bientôt)**
+**Dans le cas où vous n'arriveriez pas à compiler le jeu, vous pouvez télécharger une version déjà compilée pour Linux ou Windows [ici](https://github.com/nicolas-stein/EcoCity/releases/tag/Release)**
 
 ### Prérequis
 Le jeu utilise le framework Qt, plus précisement la version 6.2.2, il faudra donc l'installer afin de compiler le jeu.
