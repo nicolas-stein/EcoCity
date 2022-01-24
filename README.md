@@ -19,9 +19,12 @@ We work a lot to make this project so we hope you going to love it. <br />
 First you need a computer with Linux, Windows or MacOs. To get the files and play the game follow the instruction bellow.
 
 ### Prerequisites
-To play at this game you will need QT librairie, or other.
+To play at this game you will need QT librairie, or other. 
 
 ## Installation
+Download the repositorie and open it with QT on windows it's simple.
+For linux follow the step:
+
 1. Clone the repo
   ```sh
   $ git clone https://github.com/nicolas-stein/EcoCity
