@@ -6,10 +6,10 @@
 
 # EcoCity
 ## About The Project
-Hello everyone, here you can found all the files to download and execute our game **EcoCity**.
-You can found the report about our projet at Rapport_Stein_Roussarie.pdf.
-And if you want to know more about how to play and history look at Guide_de_jeu.
-We work a lot to make this project so we hope you going to love it.
+Hello everyone, here you can found all the files to download and execute our game **EcoCity**.<br />
+You can found the report about our projet at Rapport_Stein_Roussarie.pdf.<br />
+And if you want to know more about how to play and history look at Guide_de_jeu.<br />
+We work a lot to make this project so we hope you going to love it.<br />
 
 ### Built With
 - [QT](https://www.qt.io/ "QT")
@@ -22,13 +22,19 @@ To play at this game you will need some compilator like QT, or other.
 
 ## Installation
 1. Clone the repo
-`git clone https://github.com/nicolas-stein/EcoCity`
-
+    ```sh
+  git clone https://github.com/nicolas-stein/EcoCity
+  ```
+ 
 2. Compile the code
-`./compilator`
+```sh
+./compilator
+```
 
 3. Execute the code
-`./executable`
+    ```sh
+  ./executable
+  ```
 
 ## The Game
 Now that you have launch the game, it time to play. You can share it with your friend and try to make the higher score possible.
