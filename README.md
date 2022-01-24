@@ -50,7 +50,7 @@ Suivez ces instructions pour installer Qt :
 
 Pour compiler le jeu, suivre les étapes :
 
-1. Clonez ou téléchargez le dépôt Github sur votre machine
+1. Clonez ou téléchargez le dépôt Github sur votre machine<br />
 *Attention à ne pas mettre le dépôt dans des dossiers avec des accents*
 
 2. Allez dans le dossier du dépôt puis éxecutez les commandes suivantes pour compiler le programme :<br />
